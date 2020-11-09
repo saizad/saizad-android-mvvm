@@ -32,7 +32,7 @@ public class MainModule {
     }
 
     @Provides
-    static ObjectPreference providesAddPharmacyDraft(SharedPreferences sharedPreferences, Gson gson) {
+    static ObjectPreference providesObjectPreference(SharedPreferences sharedPreferences, Gson gson) {
         return new ObjectPreference(sharedPreferences, gson);
     }
 

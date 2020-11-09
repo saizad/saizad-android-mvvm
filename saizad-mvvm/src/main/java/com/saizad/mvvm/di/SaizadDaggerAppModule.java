@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import androidx.security.crypto.EncryptedSharedPreferences;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,6 +16,10 @@ import com.saizad.mvvm.FCMToken;
 import com.saizad.mvvm.NotifyOnce;
 import com.saizad.mvvm.SaizadEasyRetrofit;
 import com.saizad.mvvm.SaizadLocation;
+import com.saizad.mvvm.utils.KotlinUtilsKt;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -38,7 +44,7 @@ public abstract class SaizadDaggerAppModule {
         return new FCMToken(sharedPreferences, gson);
     }
 
-    public SaizadEasyRetrofit retrofit(Application application, CurrentUserType currentUser, Gson gson){
+    public SaizadEasyRetrofit retrofit(Application application, CurrentUserType currentUser, Gson gson) {
         return new SaizadEasyRetrofit(application, currentUser, gson, domainURL());
     }
 
@@ -53,6 +59,19 @@ public abstract class SaizadDaggerAppModule {
     @Singleton
     @Provides
     public static SharedPreferences providesSharedPreferences(Application application) {
+        try {
+            return EncryptedSharedPreferences.create(
+                    application.getPackageName() + "_preferences",
+                    KotlinUtilsKt.createMasterKey(application),
+                    application,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (GeneralSecurityException e) {
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return PreferenceManager.getDefaultSharedPreferences(application);
     }
 

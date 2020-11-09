@@ -23,13 +23,13 @@ def DOMAIN_URL_STG = "http://167.71.236.237:8080/"
 def DOMAIN_URL_PROD = "http://167.71.236.237:8080/"
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 30
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId PACKAGE_NAME
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode VERSION_CODE
         versionName VERSION_NAME
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

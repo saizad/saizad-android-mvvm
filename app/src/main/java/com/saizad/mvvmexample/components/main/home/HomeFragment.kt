@@ -2,9 +2,12 @@ package com.saizad.mvvmexample.components.main.home
 
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.View
+import com.saizad.mvvm.ObjectPreference
 import com.saizad.mvvm.ui.CountDrawable
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainFragment
+import javax.inject.Inject
 
 class HomeFragment : MainFragment<HomeViewModel>() {
 

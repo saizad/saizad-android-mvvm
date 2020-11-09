@@ -18,22 +18,22 @@ public abstract class SaizadSharedPreferences {
         this.gson = gson;
     }
 
-    final protected void putSharedPrefObject(String prefKey, Object object) {
+    final public void putSharedPrefObject(String prefKey, Object object) {
         sharedPreferences.edit().putString(prefKey, gson.toJson(object)).apply();
     }
 
     @Nullable
-    final protected <T> T getSharedPrefObject(String prefKey, Class<T> classOfT) {
+    final public <T> T getSharedPrefObject(String prefKey, Class<T> classOfT) {
         return getSharedPrefObject(prefKey, classOfT, null);
     }
 
-    final protected <T> T getSharedPrefObject(String prefKey, Class<T> classOfT, @Nullable T defValue) {
+    final public <T> T getSharedPrefObject(String prefKey, Class<T> classOfT, @Nullable T defValue) {
         String jsonValue = sharedPreferences.getString(prefKey, null);
         return jsonValue == null ? defValue : gson.fromJson(jsonValue, classOfT);
     }
 
     @Nullable
-    final protected String getValue(String prefKey) {
+    final public String getValue(String prefKey) {
         final String value = getValue(prefKey, VALUE_PLACE_HOLDER);
         if (value.equalsIgnoreCase(VALUE_PLACE_HOLDER)) {
             return null;
@@ -42,15 +42,15 @@ public abstract class SaizadSharedPreferences {
     }
 
     @NonNull
-    final protected String getValue(String prefKey, String defValue) {
+    final public String getValue(String prefKey, String defValue) {
         return sharedPreferences.getString(prefKey, defValue);
     }
 
-    final protected void putValue(String prefKey, String value) {
+    final public void putValue(String prefKey, String value) {
         sharedPreferences.edit().putString(prefKey, value).apply();
     }
 
-    final protected void removeValue(String key) {
+    final public void removeValue(String key) {
         sharedPreferences.edit().remove(key).apply();
     }
 }

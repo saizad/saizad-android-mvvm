@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.drawable.Drawable
+import android.os.Build
+import android.security.KeyPairGeneratorSpec
 import android.util.TypedValue
 import android.view.View
 import androidx.annotation.AttrRes
@@ -17,6 +19,8 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.security.crypto.MasterKey
+import androidx.security.crypto.MasterKeys
 import com.google.android.material.chip.ChipGroup
 import com.jakewharton.rxbinding2.view.RxView
 import com.saizad.mvvm.components.SaizadBaseFragment
@@ -26,7 +30,13 @@ import kotlinx.coroutines.*
 import org.joda.time.DateTime
 import org.joda.time.Period
 import org.joda.time.format.PeriodFormatterBuilder
+import java.lang.Math.abs
+import java.math.BigInteger
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.security.auth.x500.X500Principal
 import kotlin.math.max
 import kotlin.math.roundToInt
 
@@ -214,4 +224,30 @@ val Activity.hideKeyboard: Unit
 
 fun Disposable.addToComposite(saizadBaseFragment: SaizadBaseFragment<*>){
     saizadBaseFragment.compositeDisposable().add(this)
+}
+
+fun Context.createMasterKey(): String {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC)
+    } else {
+        val alias = "my_alias"
+        val start: Calendar = GregorianCalendar()
+        val end: Calendar = GregorianCalendar()
+        end.add(Calendar.YEAR, 30)
+
+        val spec = KeyPairGeneratorSpec.Builder(this)
+            .setAlias(alias)
+            .setSubject(X500Principal("CN=$alias"))
+            .setSerialNumber(BigInteger.valueOf(abs(alias.hashCode()).toLong()))
+            .setStartDate(start.time).setEndDate(end.time)
+            .build()
+
+        val kpGenerator: KeyPairGenerator = KeyPairGenerator.getInstance(
+            "RSA",
+            "AndroidKeyStore"
+        )
+        kpGenerator.initialize(spec)
+        val kp: KeyPair = kpGenerator.generateKeyPair()
+        kp.public.toString()
+    }
 }
