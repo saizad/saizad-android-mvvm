@@ -14,9 +14,9 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.ChipGroup
 import com.jakewharton.rxbinding2.view.RxView
 import com.saizad.mvvm.components.SaizadBaseFragment
@@ -214,4 +214,32 @@ val Activity.hideKeyboard: Unit
 
 fun Disposable.addToComposite(saizadBaseFragment: SaizadBaseFragment<*>){
     saizadBaseFragment.compositeDisposable().add(this)
+}
+
+
+fun ViewPager2.next() {
+    next(true)
+}
+
+fun ViewPager2.next(smoothScroll: Boolean) {
+    setCurrentItem(currentItem + 1, smoothScroll)
+}
+
+fun ViewPager2.previous() {
+    previous(true)
+}
+
+fun ViewPager2.previous(smoothScroll: Boolean) {
+    setCurrentItem(currentItem - 1, smoothScroll)
+}
+
+fun ViewPager2.isLastPage(): Boolean {
+    adapter?.let {
+        currentItem == it.itemCount - 1
+    }
+    return false
+}
+
+fun ViewPager2.isFirstPage(): Boolean {
+    return currentItem == 0
 }
