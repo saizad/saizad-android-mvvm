@@ -37,7 +37,7 @@ public abstract class CurrentUserType<U> extends SaizadSharedPreferences {
         currentUser.onNext(ObjectUtils.coalesce(getSharedPrefObject(KEY_USER_INFO, getClassType()), emptyUser));
     }
 
-    protected abstract Class<U> getClassType();
+    protected abstract @NonNull Class<U> getClassType();
 
     public void login(@NonNull U newUser) {
         currentUser.onNext(newUser);

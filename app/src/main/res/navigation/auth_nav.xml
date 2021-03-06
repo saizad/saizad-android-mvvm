@@ -24,6 +24,10 @@
         android:id="@+id/loginFragment"
         android:name="com.saizad.mvvmexample.components.auth.login.LoginFragment"
         android:label=""
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <argument
+            android:name="user"
+            app:argType="com.saizad.mvvm.model.UserInfo" />
+    </fragment>
 
 </navigation>

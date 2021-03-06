@@ -18,7 +18,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Map;
 
-import dagger.android.AndroidInjection;
 import io.reactivex.Observable;
 import io.reactivex.subjects.PublishSubject;
 import sa.zad.easyretrofit.observables.NeverErrorObservable;
@@ -62,12 +61,6 @@ abstract public class SaizadFirebaseMessagingService extends FirebaseMessagingSe
             Log.d("Fcm_token", "Fail to delete " + e.getMessage());
             throw e;
         }
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        AndroidInjection.inject(this);
     }
 
     @Override

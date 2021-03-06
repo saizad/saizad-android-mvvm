@@ -2,7 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'dagger.hilt.android.plugin'
 
 //Common
 def PACKAGE_NAME = "com.saizad.mvvmexample"
@@ -120,10 +121,10 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':saizad-mvvm')
-    annotationProcessor "com.google.dagger:dagger-compiler:2.26"
-    annotationProcessor "com.google.dagger:dagger-android-processor:2.26"
-    compileOnly 'com.squareup.inject:assisted-inject-annotations-dagger2:0.5.2'
-    annotationProcessor 'com.squareup.inject:assisted-inject-processor-dagger2:0.5.2'
+
+    implementation 'androidx.hilt:hilt-work:1.0.0-alpha03'
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     testImplementation 'joda-time:joda-time:2.9.3'
     testImplementation 'junit:junit:4.13'

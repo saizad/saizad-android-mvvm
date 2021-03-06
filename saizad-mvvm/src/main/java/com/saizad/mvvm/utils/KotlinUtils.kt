@@ -14,7 +14,6 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.chip.ChipGroup
@@ -100,14 +99,14 @@ val DateTime.notificationTimeStamp: String
     }
 
 public fun SaizadBaseFragment<*>.lifecycleScopeOnMain(block: suspend CoroutineScope.() -> Unit): Job {
-    return viewLifecycleOwner.lifecycleScopeOnMain(block)
+    return lifecycleOwner.lifecycleScopeOnMain(block)
 }
 
 public fun SaizadBaseFragment<*>.lifecycleScopeOnMain(
     timeMillis: Long,
     block: suspend CoroutineScope.() -> Unit
 ): Job {
-    return viewLifecycleOwner.lifecycleScopeOnMainWithDelay(timeMillis, block)
+    return lifecycleOwner.lifecycleScopeOnMainWithDelay(timeMillis, block)
 }
 
 public fun LifecycleOwner.lifecycleScopeOnMain(block: suspend CoroutineScope.() -> Unit): Job {

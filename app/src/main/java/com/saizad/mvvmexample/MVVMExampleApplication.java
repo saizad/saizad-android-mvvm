@@ -2,33 +2,33 @@ package com.saizad.mvvmexample;
 
 import android.util.Log;
 
+import androidx.hilt.work.HiltWorkerFactory;
 import androidx.lifecycle.Observer;
 import androidx.work.Configuration;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
-import androidx.work.WorkerFactory;
 
-import com.saizad.mvvm.CurrentUserType;
 import com.saizad.mvvm.SaizadApplication;
-import com.saizad.mvvmexample.di.DaggerAppComponent;
 import com.saizad.mvvmexample.service.LocationWorker;
 
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import dagger.android.AndroidInjector;
-import dagger.android.DaggerApplication;
+import dagger.hilt.android.HiltAndroidApp;
 
+@HiltAndroidApp
 public class MVVMExampleApplication extends SaizadApplication {
 
     public static final String LOCATION_UPDATE_TAG = "location_update";
     private static MVVMExampleApplication INSTANCE;
+
+//    @Inject
+//    CurrentUserType currentUserType;
+
     @Inject
-    CurrentUserType currentUserType;
-    @Inject
-    WorkerFactory locationWorkerFactory;
+    HiltWorkerFactory workerFactory;
 
     public MVVMExampleApplication() {
         INSTANCE = this;
@@ -42,14 +42,9 @@ public class MVVMExampleApplication extends SaizadApplication {
     }
 
     @Override
-    protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
-        return DaggerAppComponent.builder().application(this).build();
-    }
-
-    @Override
     public void onCreate() {
         super.onCreate();
-        WorkManager.initialize(this, new Configuration.Builder().setWorkerFactory(locationWorkerFactory).build());
+        WorkManager.initialize(this, new Configuration.Builder().setWorkerFactory(workerFactory).build());
     }
 
     public void cancelLocationWorker() {
@@ -82,7 +77,7 @@ public class MVVMExampleApplication extends SaizadApplication {
     }
 
 
-    public MVVMExampleCurrentUser getCurrentUserType() {
-        return (MVVMExampleCurrentUser) currentUserType;
-    }
+//    public MVVMExampleCurrentUser getCurrentUserType() {
+//        return (MVVMExampleCurrentUser) currentUserType;
+//    }
 }

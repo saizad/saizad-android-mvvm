@@ -1,11 +1,12 @@
 package com.saizad.mvvm;
 
+import android.app.Application;
 import android.content.Context;
+
 import androidx.annotation.CallSuper;
 import androidx.multidex.MultiDex;
-import dagger.android.DaggerApplication;
 
-public abstract class MultiDexApplication extends DaggerApplication {
+public abstract class MultiDexApplication extends Application {
 
     @Override
     @CallSuper

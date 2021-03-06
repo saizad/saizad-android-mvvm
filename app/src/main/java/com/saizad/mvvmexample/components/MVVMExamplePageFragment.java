@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.saizad.mvvm.CurrentUserType;
 import com.saizad.mvvm.Environment;
 import com.saizad.mvvm.SaizadLocation;
-import com.saizad.mvvm.ViewModelProviderFactory;
 import com.saizad.mvvm.pager.BasePage;
 
 import org.jetbrains.annotations.NotNull;
@@ -17,8 +16,8 @@ abstract public class MVVMExamplePageFragment<VM extends MVVMExampleViewModel> e
     @Inject
     public Environment mainEnvironment;
 
-    @Inject
-    public ViewModelProviderFactory viewModelProviderFactory;
+//    @Inject
+//    public ViewModelProviderFactory viewModelProviderFactory;
 
     @Inject
     SaizadLocation gpsLocation;
@@ -29,11 +28,11 @@ abstract public class MVVMExamplePageFragment<VM extends MVVMExampleViewModel> e
         return gpsLocation;
     }
 
-    @NonNull
-    @Override
-    public ViewModelProviderFactory viewModelProviderFactory() {
-        return viewModelProviderFactory;
-    }
+//    @NonNull
+//    @Override
+//    public ViewModelProviderFactory viewModelProviderFactory() {
+//        return viewModelProviderFactory;
+//    }
 
     @NotNull
     @Override

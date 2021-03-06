@@ -22,8 +22,8 @@ abstract public class BaseLocationWorker extends Worker {
     protected AppPermission locationPermission;
     protected final SaizadLocation saizadLocation;
 
-    public BaseLocationWorker(@NonNull Context arg0, @NonNull WorkerParameters arg1, SaizadLocation saizadLocation, AppPermission locationPermission) {
-        super(arg0, arg1);
+    public BaseLocationWorker(@NonNull Context context, @NonNull WorkerParameters workerParameters, SaizadLocation saizadLocation, AppPermission locationPermission) {
+        super(context, workerParameters);
         this.locationPermission = locationPermission;
         this.saizadLocation = saizadLocation;
     }
