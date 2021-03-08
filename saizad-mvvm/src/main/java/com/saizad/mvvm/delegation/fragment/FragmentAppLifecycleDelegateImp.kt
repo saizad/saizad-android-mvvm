@@ -36,7 +36,7 @@ class FragmentAppLifecycleDelegateImp<V : SaizadBaseViewModel>(
     }
 
     override fun <T> finishWithResult(activityResult: ActivityResult<T>) {
-        navigationFragmentResult.onNext(activityResult)
+        viewModel().navigationFragmentResult(activityResult)
         finish()
     }
 

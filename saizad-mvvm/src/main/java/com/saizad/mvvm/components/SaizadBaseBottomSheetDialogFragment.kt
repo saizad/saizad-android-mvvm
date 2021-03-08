@@ -76,15 +76,6 @@ abstract class SaizadBaseBottomSheetDialogFragment<V : SaizadBaseViewModel> :
         delegate.finish()
     }
 
-    override val navigationFragmentResult: BehaviorSubject<ActivityResult<*>>
-        get() = delegate.navigationFragmentResult
-
-    override val schedulerProviderUI: Scheduler
-        get() = delegate.schedulerProviderUI
-
-    override val schedulerProviderIO: Scheduler
-        get() = delegate.schedulerProviderIO
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         delegate.onViewCreated(view, savedInstanceState)
@@ -258,7 +249,7 @@ abstract class SaizadBaseBottomSheetDialogFragment<V : SaizadBaseViewModel> :
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        environment().permissionManager
+        permissionManager()
             .onRequestPermissionsResult(activity, requestCode, permissions, grantResults)
     }
 

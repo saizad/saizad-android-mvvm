@@ -8,7 +8,9 @@ import io.reactivex.Observable
 import java.util.concurrent.TimeUnit
 import androidx.navigation.fragment.findNavController
 import com.saizad.mvvm.model.UserInfo
+import com.saizad.mvvm.utils.lifecycleScopeOnMainWithDelay
 import dagger.hilt.android.AndroidEntryPoint
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 @AndroidEntryPoint
 class SplashFragment : AuthFragment<SplashViewModel>() {
@@ -17,19 +19,15 @@ class SplashFragment : AuthFragment<SplashViewModel>() {
         get() = SplashViewModel::class.java
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?, recycled: Boolean) {
-        Observable.just("")
-            .subscribeOn(schedulerProviderIO)
-            .delay(100, TimeUnit.MILLISECONDS)
-            .observeOn(schedulerProviderUI)
-            .subscribe {
-                findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment(
-                    UserInfo().apply {
-                        this.userName = "hello"
-                        this.email = "asdfad@gmail.com"
-                        this.mobile = "9999999999"
-                    }
-                ))
-            }
+        lifecycleScopeOnMainWithDelay(100){
+            findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment(
+                UserInfo().apply {
+                    this.userName = "hello"
+                    this.email = "asdfad@gmail.com"
+                    this.mobile = "9999999999"
+                }
+            ))
+        }
     }
 
     override fun layoutRes(): Int {

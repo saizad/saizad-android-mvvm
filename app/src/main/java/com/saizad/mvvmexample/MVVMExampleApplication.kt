@@ -18,7 +18,7 @@ import javax.inject.Inject
 class MVVMExampleApplication : SaizadApplication() {
     
     @Inject
-    lateinit var currentUserType: CurrentUserType<*>
+    lateinit var currentUserType: MVVMExampleCurrentUser
     
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -64,10 +64,6 @@ class MVVMExampleApplication : SaizadApplication() {
             }
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(oneTimeWorkRequest.id)
             .observeForever(observer)
-    }
-
-    fun getCurrentUserType(): MVVMExampleCurrentUser? {
-        return currentUserType as MVVMExampleCurrentUser?
     }
 
     companion object {

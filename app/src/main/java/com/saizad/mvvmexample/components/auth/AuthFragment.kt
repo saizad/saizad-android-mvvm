@@ -7,10 +7,5 @@ import javax.inject.Inject
 
 abstract class AuthFragment<V : AuthViewModel> : MVVMExampleFragment<V>() {
 
-    @Inject
-    lateinit var authEnvironment: AuthEnvironment
 
-    protected fun api(): AuthApi {
-        return authEnvironment.api
-    }
 }

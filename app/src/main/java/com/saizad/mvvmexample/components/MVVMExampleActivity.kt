@@ -1,8 +1,8 @@
-package com.saizad.mvvmexample.components;
+package com.saizad.mvvmexample.components
 
-import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
 import com.saizad.mvvm.components.SaizadBaseActivity
+import sa.zad.easypermission.PermissionManager
 import javax.inject.Inject
 
 abstract class MVVMExampleActivity<VM : MVVMExampleViewModel> : SaizadBaseActivity<VM>() {
@@ -13,10 +13,10 @@ abstract class MVVMExampleActivity<VM : MVVMExampleViewModel> : SaizadBaseActivi
     lateinit var gpsLocation: SaizadLocation
 
     @Inject
-    lateinit var environment: Environment
+    lateinit var permissionManager: PermissionManager
 
-    final override fun environment(): Environment {
-        return environment
+    override fun permissionManager(): PermissionManager {
+        return permissionManager
     }
 
     final override fun appLocation(): SaizadLocation {

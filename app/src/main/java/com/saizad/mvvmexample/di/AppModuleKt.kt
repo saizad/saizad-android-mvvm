@@ -12,6 +12,7 @@ import com.saizad.mvvmexample.api.BackgroundApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import io.reactivex.subjects.BehaviorSubject
 import sa.zad.easypermission.AppPermission
@@ -22,25 +23,23 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object BaseDiAppModuleKt {
+object AppModuleKt {
 
     private const val MAX_REQUEST = 3
-
 
     @Singleton
     @Provides
     fun providesRetrofit(
-        application: Application, currentUser: CurrentUserType<*>, gson: Gson
+        application: Application, currentUser: MVVMExampleCurrentUser, gson: Gson
     ): SaizadEasyRetrofit {
         return SaizadEasyRetrofit(application, currentUser, gson, BuildConfig.DOMAIN_URL)
     }
-
 
     @Singleton
     @Provides
     fun providesEnvironment(
         fcmToken: FCMToken,
-        currentUser: CurrentUserType<*>,
+        currentUser: MVVMExampleCurrentUser,
         navigationFragmentResult: BehaviorSubject<ActivityResult<*>>,
         @Named("notification") notifyOnceBehaviorSubject: BehaviorSubject<NotifyOnce<*>>,
         permissionManager: PermissionManager
@@ -56,7 +55,7 @@ object BaseDiAppModuleKt {
 
     @Singleton
     @Provides
-    fun currentUser(sharedPreferences: SharedPreferences, gson: Gson): CurrentUserType<*> {
+    fun providesMVVMExampleCurrentUser(sharedPreferences: SharedPreferences, gson: Gson): MVVMExampleCurrentUser {
         return MVVMExampleCurrentUser(sharedPreferences, gson)
     }
 
@@ -69,7 +68,7 @@ object BaseDiAppModuleKt {
         )
     }
 
-    fun storagePermission(sharedPreferences: SharedPreferences): AppPermission {
+    private fun storagePermission(sharedPreferences: SharedPreferences): AppPermission {
         return AppPermissionImp(
             RequestCodes.STORAGE_PERMISSION_REQUEST_CODE, arrayOf(
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -78,7 +77,7 @@ object BaseDiAppModuleKt {
         )
     }
 
-    fun locationPermission(sharedPreferences: SharedPreferences): AppPermission {
+    private fun locationPermission(sharedPreferences: SharedPreferences): AppPermission {
         return AppPermissionImp(
             RequestCodes.LOCATION_PERMISSION_REQUEST_CODE, arrayOf(
                 Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -91,5 +90,13 @@ object BaseDiAppModuleKt {
     @Provides
     fun providesBackgroundApi(saizadEasyRetrofit: SaizadEasyRetrofit): BackgroundApi {
         return saizadEasyRetrofit.provideRetrofit().create(BackgroundApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun providesObjectPreference(
+        sharedPreferences: SharedPreferences, gson: Gson
+    ): ObjectPreference {
+        return ObjectPreference(sharedPreferences, gson)
     }
 }

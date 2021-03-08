@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
 import com.saizad.mvvm.components.SaizadBaseViewModel
+import sa.zad.easypermission.PermissionManager
 
 interface BaseCB<V : SaizadBaseViewModel> {
 
@@ -17,7 +18,7 @@ interface BaseCB<V : SaizadBaseViewModel> {
     fun viewModelStoreOwner(): ViewModelStoreOwner
     val viewModelClassType: Class<V>
     fun appLocation(): SaizadLocation
-    fun environment(): Environment
+    fun permissionManager(): PermissionManager
 
     @MenuRes
     fun menRes(): Int

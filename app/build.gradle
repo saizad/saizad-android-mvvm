@@ -15,7 +15,7 @@ def VERSION_NAME = "0.0.1"
 def DOMAIN_URL_LOCAL = "http://192.168.0.112:8000/"
 
 //Dev
-def DOMAIN_URL_DEV = "http://167.71.236.237:8080/"
+def DOMAIN_URL_DEV = "https://reqres.in/"
 
 //Stg
 def DOMAIN_URL_STG = "http://167.71.236.237:8080/"

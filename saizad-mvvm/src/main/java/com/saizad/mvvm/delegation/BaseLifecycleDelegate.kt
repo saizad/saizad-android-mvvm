@@ -28,9 +28,6 @@ interface BaseLifecycleDelegate {
     fun showToast(text: CharSequence, toastLength: Int)
     fun log(integer: Int)
     fun log(string: String)
-    val navigationFragmentResult: BehaviorSubject<ActivityResult<*>>
-    val schedulerProviderUI: Scheduler
-    val schedulerProviderIO: Scheduler
     fun requestError(errorData: ErrorData)
     fun requestApiError(apiErrorData: ApiErrorData)
     fun requestLoading(loadingData: LoadingData)

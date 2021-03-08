@@ -1,8 +1,10 @@
 package com.saizad.mvvmexample.di.main
 
-import android.content.SharedPreferences
-import com.google.gson.Gson
-import com.saizad.mvvm.*
+import com.saizad.mvvm.ActivityResult
+import com.saizad.mvvm.FCMToken
+import com.saizad.mvvm.NotifyOnce
+import com.saizad.mvvm.SaizadEasyRetrofit
+import com.saizad.mvvmexample.MVVMExampleCurrentUser
 import com.saizad.mvvmexample.api.MainApi
 import dagger.Module
 import dagger.Provides
@@ -17,13 +19,12 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object MainModule {
     
-    @Singleton
     @Provides
     fun providesAuthEnvironment(
         mainApi: MainApi,
         fcmToken: FCMToken,
         permissionManager: PermissionManager,
-        currentUser: CurrentUserType<*>,
+        currentUser: MVVMExampleCurrentUser,
         navigationFragmentResult: BehaviorSubject<ActivityResult<*>>,
         @Named("notification") notifyOnceBehaviorSubject: BehaviorSubject<NotifyOnce<*>>
     ): MainEnvironment {
@@ -37,17 +38,8 @@ object MainModule {
         )
     }
     
-    @Singleton
     @Provides
     fun providesMainApi(saizadEasyRetrofit: SaizadEasyRetrofit): MainApi {
         return saizadEasyRetrofit.provideRetrofit().create(MainApi::class.java)
-    }
-    
-    @Singleton
-    @Provides
-    fun providesObjectPreference(
-        sharedPreferences: SharedPreferences, gson: Gson
-    ): ObjectPreference {
-        return ObjectPreference(sharedPreferences, gson)
     }
 }

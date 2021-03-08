@@ -1,29 +1,32 @@
 package com.saizad.mvvmexample.components
 
-import com.saizad.mvvm.CurrentUserType
-import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
 import com.saizad.mvvm.components.SaizadBaseFragment
+import com.saizad.mvvmexample.MVVMExampleCurrentUser
+import sa.zad.easypermission.PermissionManager
 import javax.inject.Inject
 
 abstract class MVVMExampleFragment<VM : MVVMExampleViewModel> :
     SaizadBaseFragment<VM>() {
-    
-    @Inject
-    lateinit var mainEnvironment: Environment
 
     @Inject
     lateinit var gpsLocation: SaizadLocation
-    
+
+    @Inject
+    lateinit var currentUserType: MVVMExampleCurrentUser
+
+    @Inject
+    lateinit var permissionManager: PermissionManager
+
+    @Inject
+    lateinit var location: SaizadLocation
+
     override fun appLocation(): SaizadLocation {
-        return gpsLocation
+        return location
     }
 
-    override fun environment(): Environment {
-        return mainEnvironment
+    override fun permissionManager(): PermissionManager {
+        return permissionManager
     }
 
-    protected fun currentUser(): CurrentUserType<*> {
-        return mainEnvironment.currentUser
-    }
 }

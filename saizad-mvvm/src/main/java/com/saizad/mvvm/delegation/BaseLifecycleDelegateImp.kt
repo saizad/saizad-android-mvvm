@@ -66,17 +66,6 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
         Log.i(tag, string)
     }
 
-    override val navigationFragmentResult: BehaviorSubject<ActivityResult<*>>
-        get() = appLifecycleDelegate.environment().activityResultBehaviorSubject
-
-
-    override val schedulerProviderUI: Scheduler
-        get() = AndroidSchedulers.mainThread()
-
-
-    override val schedulerProviderIO: Scheduler
-        get() = Schedulers.io()
-
     override fun requestError(errorData: ErrorData) {
         val handle =
             baseLifecycleCallBack.serverError(errorData.throwable, errorData.id)

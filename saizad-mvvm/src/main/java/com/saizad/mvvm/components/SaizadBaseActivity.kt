@@ -71,15 +71,6 @@ abstract class SaizadBaseActivity<V : SaizadBaseViewModel> : AppCompatActivity()
         delegate.log(string)
     }
 
-    override val navigationFragmentResult: BehaviorSubject<ActivityResult<*>>
-        get() = delegate.navigationFragmentResult
-
-    override val schedulerProviderUI: Scheduler
-        get() = delegate.schedulerProviderUI
-
-    override val schedulerProviderIO: Scheduler
-        get() = delegate.schedulerProviderIO
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         delegate.onCreate(savedInstanceState)
@@ -179,8 +170,7 @@ abstract class SaizadBaseActivity<V : SaizadBaseViewModel> : AppCompatActivity()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        environment().activityResultBehaviorSubject
-            .onNext(ActivityResult(requestCode, resultCode, data))
+        viewModel().navigationFragmentResult(ActivityResult(requestCode, resultCode, data))
     }
 
     override fun viewModel(): V {
@@ -222,7 +212,7 @@ abstract class SaizadBaseActivity<V : SaizadBaseViewModel> : AppCompatActivity()
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        environment().permissionManager
+        permissionManager()
             .onRequestPermissionsResult(this, requestCode, permissions, grantResults)
     }
 

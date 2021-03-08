@@ -4,25 +4,27 @@ import com.saizad.mvvm.CurrentUserType
 import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
 import com.saizad.mvvm.pager.BasePage
+import com.saizad.mvvmexample.MVVMExampleCurrentUser
+import sa.zad.easypermission.PermissionManager
 import javax.inject.Inject
 
 abstract class MVVMExamplePageFragment<VM : MVVMExampleViewModel> : BasePage<VM>() {
     
     @Inject
-    lateinit var mainEnvironment: Environment
+    lateinit var permissionManager: PermissionManager
 
     @Inject
     lateinit var gpsLocation: SaizadLocation
+
+    @Inject
+    lateinit var mvvmExampleCurrentUser: MVVMExampleCurrentUser
     
     override fun appLocation(): SaizadLocation {
         return gpsLocation
     }
 
-    override fun environment(): Environment {
-        return mainEnvironment
+    override fun permissionManager(): PermissionManager {
+        return permissionManager
     }
 
-    protected fun currentUser(): CurrentUserType<*> {
-        return mainEnvironment.currentUser
-    }
 }

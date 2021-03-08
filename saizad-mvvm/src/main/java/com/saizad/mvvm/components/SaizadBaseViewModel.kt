@@ -88,13 +88,20 @@ abstract class SaizadBaseViewModel(
         return mutableLiveData
     }
 
+    fun <M> liveDataRequestNoEnvelope(observable: NeverErrorObservable<M>, requestId: Int): LiveData<M> {
+        val mutableLiveData = MutableLiveData<M>()
+        apiRequestNoEnvelope(observable, requestId)
+            .subscribe {
+                mutableLiveData.setValue(it)
+            }
+        return mutableLiveData
+    }
+
     fun <M> liveData(observable: NeverErrorObservable<DataModel<M>>, requestId: Int): LiveData<M> {
         val mutableLiveData = MutableLiveData<M>()
         apiRequest(observable, requestId)
-            .subscribe { mDataModel: DataModel<M> ->
-                mutableLiveData.setValue(
-                    mDataModel.data
-                )
+            .subscribe {
+                mutableLiveData.setValue(it.data)
             }
         return mutableLiveData
     }
@@ -102,10 +109,13 @@ abstract class SaizadBaseViewModel(
     fun <M> apiRequest(
         observable: NeverErrorObservable<DataModel<M>>, requestId: Int
     ): Observable<DataModel<M>> {
-        return request(
-            observable,
-            requestId
-        )
+        return request(observable, requestId)
+    }
+
+    fun <M> apiRequestNoEnvelope(
+        observable: NeverErrorObservable<M>, requestId: Int
+    ): Observable<M> {
+        return request(observable, requestId)
     }
 
     fun <M> request(
@@ -116,7 +126,7 @@ abstract class SaizadBaseViewModel(
             .successResponse { response.invoke(it) }
             .timeoutException { shootError(it, requestId) }
             .connectionException { shootError(it, requestId) }
-            .failedResponse { dataModelResponse: Response<M>? -> }
+            .failedResponse {  }
             .apiException({
                 shootError(it, requestId)
             }, ErrorModel::class.java)
@@ -198,7 +208,7 @@ abstract class SaizadBaseViewModel(
     }
 
     @CallSuper
-    fun onViewCreated() {
+    open fun onViewCreated() {
         disposable = CompositeDisposable()
         disposable.add(
             environment.currentUser.observable()
@@ -225,6 +235,10 @@ abstract class SaizadBaseViewModel(
         val value = LoadingData(loading, id)
         Handler(Looper.getMainLooper())
             .post { loadingLiveData.setValue(value) }
+    }
+
+    fun navigationFragmentResult(activityResult: ActivityResult<*>){
+        environment.activityResultBehaviorSubject.onNext(activityResult)
     }
 
     abstract class LiveDataStatus(var id: Int) {
