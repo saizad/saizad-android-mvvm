@@ -5,7 +5,7 @@ import android.content.res.Resources
 import android.util.DisplayMetrics
 
 
-public object MetricsUtil {
+object MetricsUtil {
 
     /**
      * This method converts dp unit to equivalent pixels, depending on device density.
@@ -14,7 +14,7 @@ public object MetricsUtil {
      * access to Context, just pass null.
      * @return A float value to represent px equivalent to dp depending on device density
      */
-    public fun convertDpToPixel(dp: Float, context: Context?): Float {
+    fun convertDpToPixel(dp: Float, context: Context?): Float {
         return if (context != null) {
             val resources = context.resources
             val metrics = resources.displayMetrics
@@ -32,7 +32,7 @@ public object MetricsUtil {
      * access to Context, just pass null.
      * @return A float value to represent dp equivalent to px value
      */
-    public fun convertPixelsToDp(px: Float, context: Context?): Float {
+    fun convertPixelsToDp(px: Float, context: Context?): Float {
         return if (context != null) {
             val resources = context.resources
             val metrics = resources.displayMetrics

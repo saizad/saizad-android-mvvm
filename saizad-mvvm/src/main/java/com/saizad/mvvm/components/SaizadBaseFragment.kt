@@ -20,7 +20,6 @@ import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleCallBack
 import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleDelegate
 import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleDelegateImp
 import com.saizad.mvvm.delegation.fragment.FragmentCB
-import com.saizad.mvvm.di.AssistedFactory
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
@@ -255,7 +254,7 @@ abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        environment().permissionManager()
+        environment().permissionManager
             .onRequestPermissionsResult(activity, requestCode, permissions, grantResults)
     }
 
@@ -273,10 +272,6 @@ abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
 
     override fun menRes(): Int {
         return 0
-    }
-
-    override fun viewModelProviderFactory(): AssistedFactory<V>? {
-        return null
     }
 
     override fun bundle(): Bundle? {

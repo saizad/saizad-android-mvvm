@@ -3,11 +3,10 @@ package com.saizad.mvvmexample.components
 import com.saizad.mvvm.CurrentUserType
 import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
-import com.saizad.mvvm.components.SaizadBaseFragment
+import com.saizad.mvvm.pager.BasePage
 import javax.inject.Inject
 
-abstract class MVVMExampleFragment<VM : MVVMExampleViewModel> :
-    SaizadBaseFragment<VM>() {
+abstract class MVVMExamplePageFragment<VM : MVVMExampleViewModel> : BasePage<VM>() {
     
     @Inject
     lateinit var mainEnvironment: Environment

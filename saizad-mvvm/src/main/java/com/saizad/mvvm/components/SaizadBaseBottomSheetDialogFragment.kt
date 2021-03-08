@@ -258,7 +258,7 @@ abstract class SaizadBaseBottomSheetDialogFragment<V : SaizadBaseViewModel> :
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        environment().permissionManager()
+        environment().permissionManager
             .onRequestPermissionsResult(activity, requestCode, permissions, grantResults)
     }
 

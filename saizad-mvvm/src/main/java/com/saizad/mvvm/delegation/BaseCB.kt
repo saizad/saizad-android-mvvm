@@ -9,14 +9,12 @@ import androidx.navigation.NavController
 import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
 import com.saizad.mvvm.components.SaizadBaseViewModel
-import com.saizad.mvvm.di.AssistedFactory
 
 interface BaseCB<V : SaizadBaseViewModel> {
 
     val lifecycleOwner: LifecycleOwner
     fun context(): Context
     fun viewModelStoreOwner(): ViewModelStoreOwner
-    fun viewModelProviderFactory(): AssistedFactory<V>?
     val viewModelClassType: Class<V>
     fun appLocation(): SaizadLocation
     fun environment(): Environment

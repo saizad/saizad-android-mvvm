@@ -19,7 +19,6 @@ import com.saizad.mvvm.delegation.activity.ActivityAppLifeCycleCallback
 import com.saizad.mvvm.delegation.activity.ActivityAppLifecycleDelegate
 import com.saizad.mvvm.delegation.activity.ActivityAppLifecycleDelegateImp
 import com.saizad.mvvm.delegation.activity.ActivityCB
-import com.saizad.mvvm.di.AssistedFactory
 import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
@@ -178,13 +177,9 @@ abstract class SaizadBaseActivity<V : SaizadBaseViewModel> : AppCompatActivity()
         return delegate.showAlertDialogYesNo(title, message, icon, positiveName, negativeName)
     }
 
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        environment().navigationFragmentResult()
+        environment().activityResultBehaviorSubject
             .onNext(ActivityResult(requestCode, resultCode, data))
     }
 
@@ -227,12 +222,8 @@ abstract class SaizadBaseActivity<V : SaizadBaseViewModel> : AppCompatActivity()
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        environment().permissionManager()
+        environment().permissionManager
             .onRequestPermissionsResult(this, requestCode, permissions, grantResults)
-    }
-
-    override fun viewModelProviderFactory(): AssistedFactory<V>? {
-        return null
     }
 
     override fun bundle(): Bundle? {

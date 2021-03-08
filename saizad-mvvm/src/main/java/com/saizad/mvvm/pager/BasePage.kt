@@ -14,7 +14,6 @@ abstract class BasePage<VM : SaizadBaseViewModel> : SaizadBaseFragment<VM>(),
 
     private var pageLoaded = BehaviorSubject.create<Boolean>()
 
-
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?, recycled: Boolean) {
         super.onViewCreated(view, savedInstanceState, recycled)

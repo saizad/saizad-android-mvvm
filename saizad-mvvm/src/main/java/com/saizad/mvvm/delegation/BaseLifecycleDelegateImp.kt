@@ -17,8 +17,6 @@ import com.saizad.mvvm.LoadingDialog
 import com.saizad.mvvm.SaizadLocation.GPSOffException
 import com.saizad.mvvm.components.SaizadBaseViewModel
 import com.saizad.mvvm.components.SaizadBaseViewModel.*
-import com.saizad.mvvm.di.AssistedFactory
-import com.saizad.mvvm.di.AssistedFactory.Companion.provideFactory
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -41,16 +39,7 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
     }
 
     private fun getFragmentViewModel(viewModel: Class<V>): V {
-        val assistedFactory = appLifecycleDelegate.viewModelProviderFactory()
-        val owner = appLifecycleDelegate.viewModelStoreOwner()
-        val viewModelProvider = if (assistedFactory != null) {
-            val provideFactory =
-                provideFactory(assistedFactory, appLifecycleDelegate.bundle()!!)
-            ViewModelProvider(owner, provideFactory)
-        } else {
-            ViewModelProvider(owner)
-        }
-        return viewModelProvider[viewModel]
+        return ViewModelProvider(appLifecycleDelegate.viewModelStoreOwner()).get(viewModel)
     }
 
     override fun showLongToast(text: CharSequence) {
@@ -78,7 +67,7 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
     }
 
     override val navigationFragmentResult: BehaviorSubject<ActivityResult<*>>
-        get() = appLifecycleDelegate.environment().navigationFragmentResult()
+        get() = appLifecycleDelegate.environment().activityResultBehaviorSubject
 
 
     override val schedulerProviderUI: Scheduler

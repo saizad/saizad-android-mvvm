@@ -2,18 +2,13 @@ package com.saizad.mvvmexample.components.auth.splash
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.viewModels
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.auth.AuthFragment
 import io.reactivex.Observable
-import kotlinx.android.synthetic.main.fragment_splash.*
 import java.util.concurrent.TimeUnit
 import androidx.navigation.fragment.findNavController
-import com.saizad.mvvm.di.AssistedFactory
 import com.saizad.mvvm.model.UserInfo
-import com.saizad.mvvmexample.components.auth.login.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SplashFragment : AuthFragment<SplashViewModel>() {
