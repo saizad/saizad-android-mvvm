@@ -36,22 +36,15 @@ interface BaseLifecycleDelegate {
     fun showAlertDialogOk(
         title: String,
         message: String,
-        cancelAble: Boolean
-    ): LiveData<Int>
-
-    fun showAlertDialogOk(title: String, message: String): LiveData<Int>
-    fun showAlertDialogYesNo(
-        title: String,
-        message: String,
-        @DrawableRes icon: Int
+        cancelAble: Boolean = false
     ): LiveData<Int>
 
     fun showAlertDialogYesNo(
         title: String,
         message: String,
         @DrawableRes icon: Int,
-        positiveName: String,
-        negativeName: String
+        positiveName: String = "Yes",
+        negativeName: String = "No"
     ): LiveData<Int>
 
     fun requestLocation(locationAction: Action1<Location>)

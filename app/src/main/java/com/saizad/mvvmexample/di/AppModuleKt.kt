@@ -32,7 +32,7 @@ object AppModuleKt {
     fun providesRetrofit(
         application: Application, currentUser: MVVMExampleCurrentUser, gson: Gson
     ): SaizadEasyRetrofit {
-        return SaizadEasyRetrofit(application, currentUser, gson, BuildConfig.DOMAIN_URL)
+        return SaizadEasyRetrofit(application, currentUser, gson, BuildConfig.DOMAIN_URL, BuildConfig.DEBUG)
     }
 
     @Singleton

@@ -9,19 +9,17 @@ import androidx.annotation.CallSuper
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
-import com.saizad.mvvm.ActivityResult
 import com.saizad.mvvm.LoadingDialog
 import com.saizad.mvvm.SaizadLocation.GPSOffException
 import com.saizad.mvvm.components.SaizadBaseViewModel
 import com.saizad.mvvm.components.SaizadBaseViewModel.*
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.subjects.BehaviorSubject
 import rx.functions.Action1
 
 abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>(
@@ -75,7 +73,7 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
     }
 
     override fun requestApiError(apiErrorData: ApiErrorData) {
-        val error = apiErrorData.apiErrorException.error
+        val error = apiErrorData.apiErrorException.errorModel.error
         val handel = baseLifecycleCallBack.serverError(
             apiErrorData.apiErrorException, apiErrorData.id
         )
@@ -115,27 +113,6 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
         return liveData
     }
 
-    override fun showAlertDialogOk(
-        title: String,
-        message: String
-    ): LiveData<Int> {
-        return showAlertDialogOk(title, message, false)
-    }
-
-    override fun showAlertDialogYesNo(
-        title: String,
-        message: String,
-        @DrawableRes icon: Int
-    ): LiveData<Int> {
-        return showAlertDialogYesNo(
-            title,
-            message,
-            icon,
-            appLifecycleDelegate.context().getString(android.R.string.yes),
-            appLifecycleDelegate.context().getString(android.R.string.no)
-        )
-    }
-
     override fun showAlertDialogYesNo(
         title: String,
         message: String,
@@ -150,12 +127,12 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
             .setIcon(icon)
             .setPositiveButton(
                 positiveName
-            ) { dialog: DialogInterface?, which: Int ->
+            ) { _: DialogInterface?, which: Int ->
                 liveData.setValue(which)
             }
             .setNegativeButton(
                 negativeName
-            ) { dialog: DialogInterface?, which: Int ->
+            ) { _: DialogInterface?, which: Int ->
                 liveData.setValue(which)
             }
             .show()
@@ -224,31 +201,23 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
         viewModel.onViewCreated()
         compositeDisposable = CompositeDisposable()
         log("onViewReady")
-        viewModel.errorLiveData().observe(
+
+        viewModel.errorLiveData.observe(
             appLifecycleDelegate.lifecycleOwner,
-            Observer { errorData: ErrorData ->
-                if (!errorData.isDiscarded) {
-                    baseLifecycleCallBack.requestError(errorData)
-                    errorData.discard()
-                }
+            Observer {
+                baseLifecycleCallBack.requestError(it)
             }
         )
-        viewModel.apiErrorLiveData().observe(
+        viewModel.apiErrorLiveData.observe(
             appLifecycleDelegate.lifecycleOwner,
-            Observer { apiErrorData: ApiErrorData ->
-                if (!apiErrorData.isDiscarded) {
-                    baseLifecycleCallBack.requestApiError(apiErrorData)
-                    apiErrorData.discard()
-                }
+            Observer {
+                baseLifecycleCallBack.requestApiError(it)
             }
         )
-        viewModel.loadingLiveData().observe(
+        viewModel.loadingLiveData.observe(
             appLifecycleDelegate.lifecycleOwner,
-            Observer { loadingData: LoadingData ->
-                if (!loadingData.isDiscarded) {
-                    baseLifecycleCallBack.requestLoading(loadingData)
-                    loadingData.discard()
-                }
+            Observer {
+                baseLifecycleCallBack.requestLoading(it)
             }
         )
     }

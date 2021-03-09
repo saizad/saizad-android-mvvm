@@ -12,7 +12,8 @@ import java.net.URLDecoder
 
 class SaizadEasyRetrofitClient(
     protected val application: Application,
-    protected val currentUser: CurrentUserType<*>
+    protected val currentUser: CurrentUserType<*>,
+    val isDebugMode: Boolean = false
 ) : EasyRetrofitClient(application) {
 
     override fun builderReady(builder: OkHttpClient.Builder): OkHttpClient.Builder {
@@ -33,9 +34,6 @@ class SaizadEasyRetrofitClient(
             60L
         } else super.cacheStale(cachePolicy)
     }
-
-    protected val isDebugMode: Boolean
-        protected get() = true
 
     companion object {
         private fun getAuthInterceptor(currentUser: CurrentUserType<*>): Interceptor {

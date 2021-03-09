@@ -29,7 +29,8 @@ abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
     Fragment(), FragmentAppLifecycleDelegate, FragmentCB<V>,
     FragmentAppLifecycleCallBack {
 
-    protected var delegate: FragmentAppLifecycleDelegate
+    protected var delegate: FragmentAppLifecycleDelegate =
+        FragmentAppLifecycleDelegateImp(this, this, javaClass.simpleName)
 
     override fun context(): Context {
         return requireContext()
@@ -40,7 +41,7 @@ abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
     }
 
     override val lifecycleOwner: LifecycleOwner
-        get() = this
+        get() = viewLifecycleOwner
 
     abstract override val viewModelClassType: Class<V>
 
@@ -201,21 +202,6 @@ abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
         return delegate.showAlertDialogOk(title, message, cancelAble)
     }
 
-    override fun showAlertDialogOk(
-        title: String,
-        message: String
-    ): LiveData<Int> {
-        return delegate.showAlertDialogOk(title, message, false)
-    }
-
-    override fun showAlertDialogYesNo(
-        title: String,
-        message: String,
-        @DrawableRes icon: Int
-    ): LiveData<Int> {
-        return delegate.showAlertDialogYesNo(title, message, icon)
-    }
-
     override fun showAlertDialogYesNo(
         title: String,
         message: String,
@@ -268,7 +254,4 @@ abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
         return arguments
     }
 
-    init {
-        delegate = FragmentAppLifecycleDelegateImp(this, this, javaClass.simpleName)
-    }
 }

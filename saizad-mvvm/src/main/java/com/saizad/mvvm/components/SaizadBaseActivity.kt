@@ -27,12 +27,8 @@ import rx.functions.Action1
 abstract class SaizadBaseActivity<V : SaizadBaseViewModel> : AppCompatActivity(),
     ActivityAppLifecycleDelegate, ActivityCB<V>, ActivityAppLifeCycleCallback {
 
+    protected val delegate: ActivityAppLifecycleDelegate = ActivityAppLifecycleDelegateImp(this, this, javaClass.simpleName)
 
-    protected val delegate: ActivityAppLifecycleDelegate
-
-    init {
-        delegate = ActivityAppLifecycleDelegateImp(this, this, javaClass.simpleName)
-    }
 
     override fun context(): Context {
         return this
@@ -141,21 +137,6 @@ abstract class SaizadBaseActivity<V : SaizadBaseViewModel> : AppCompatActivity()
         cancelAble: Boolean
     ): LiveData<Int> {
         return delegate.showAlertDialogOk(title, message, cancelAble)
-    }
-
-    override fun showAlertDialogOk(
-        title: String,
-        message: String
-    ): LiveData<Int> {
-        return delegate.showAlertDialogOk(title, message, false)
-    }
-
-    override fun showAlertDialogYesNo(
-        title: String,
-        message: String,
-        @DrawableRes icon: Int
-    ): LiveData<Int> {
-        return delegate.showAlertDialogYesNo(title, message, icon)
     }
 
     override fun showAlertDialogYesNo(

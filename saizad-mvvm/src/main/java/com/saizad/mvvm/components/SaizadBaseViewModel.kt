@@ -1,13 +1,12 @@
 package com.saizad.mvvm.components
 
-import android.os.Handler
-import android.os.Looper
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.common.util.ArrayUtils
+import com.google.gson.Gson
 import com.sa.easyandroidform.ObjectUtils
 import com.saizad.mvvm.ActivityResult
 import com.saizad.mvvm.BaseNotificationModel
@@ -16,6 +15,7 @@ import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.model.DataModel
 import com.saizad.mvvm.model.ErrorModel
 import com.saizad.mvvm.model.IntPageDataModel
+import com.shopify.livedataktx.SingleLiveData
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -31,24 +31,25 @@ abstract class SaizadBaseViewModel(
 
     private val activityResult: BehaviorSubject<ActivityResult<*>> =
         environment.activityResultBehaviorSubject
-    protected var notification: BehaviorSubject<NotifyOnce<*>> = environment.notificationBehaviorSubject
+    protected var notification: BehaviorSubject<NotifyOnce<*>> =
+        environment.notificationBehaviorSubject
 
     protected var disposable = CompositeDisposable()
-    private val loadingLiveData = MutableLiveData<LoadingData>()
-    private val errorLiveData = MutableLiveData<ErrorData>()
-    private val apiErrorLiveData = MutableLiveData<ApiErrorData>()
+    val loadingLiveData = SingleLiveData<LoadingData>()
+    val errorLiveData = SingleLiveData<ErrorData>()
+    val apiErrorLiveData = SingleLiveData<ApiErrorData>()
     var currentUser = MutableLiveData<Any>()
 
     fun <T : BaseNotificationModel?> notificationListener(notificationType: Array<String>?): LiveData<T> {
         val notificationModelMutableLiveData = MutableLiveData<T>()
         disposable.add(
             notification
-                .filter { notifyOnce: NotifyOnce<*> ->
-                    ArrayUtils.contains(notificationType, notifyOnce.type)
+                .filter {
+                    ArrayUtils.contains(notificationType, it.type)
                 }
-                .filter { notifyOnce: NotifyOnce<*> -> !notifyOnce.isRead }
+                .filter { !it.isRead }
                 .observeOn(AndroidSchedulers.mainThread())
-                .map { notifyOnce: NotifyOnce<*> -> notifyOnce.notificationModel as T }
+                .map { it.notificationModel as T }
                 .subscribe({
                     notificationModelMutableLiveData.setValue(it)
                 }) {
@@ -88,9 +89,13 @@ abstract class SaizadBaseViewModel(
         return mutableLiveData
     }
 
-    fun <M> liveDataRequestNoEnvelope(observable: NeverErrorObservable<M>, requestId: Int): LiveData<M> {
+    open fun <M> liveDataRequestNoEnvelope(
+        observable: NeverErrorObservable<M>,
+        requestId: Int,
+        errorResponse: Response<M>.() -> Unit = {}
+    ): LiveData<M> {
         val mutableLiveData = MutableLiveData<M>()
-        apiRequestNoEnvelope(observable, requestId)
+        apiRequestNoEnvelope(observable, requestId, errorResponse)
             .subscribe {
                 mutableLiveData.setValue(it)
             }
@@ -113,22 +118,30 @@ abstract class SaizadBaseViewModel(
     }
 
     fun <M> apiRequestNoEnvelope(
-        observable: NeverErrorObservable<M>, requestId: Int
+        observable: NeverErrorObservable<M>, requestId: Int,
+        errorResponse: Response<M>.() -> Unit = {}
     ): Observable<M> {
-        return request(observable, requestId)
+        return request(observable, requestId, errorResponse = errorResponse)
     }
 
     fun <M> request(
-        observable: NeverErrorObservable<M>, requestId: Int, response: Response<M>.() -> Unit = {}
+        observable: NeverErrorObservable<M>,
+        requestId: Int,
+        response: Response<M>.() -> Unit = {},
+        errorResponse: Response<M>.() -> Unit = {}
     ): Observable<M> {
         shootLoading(true, requestId)
         return observable
             .successResponse { response.invoke(it) }
             .timeoutException { shootError(it, requestId) }
             .connectionException { shootError(it, requestId) }
-            .failedResponse {  }
+            .failedResponse {
+                errorResponse.invoke(it)
+            }
             .apiException({
-                shootError(it, requestId)
+                it?.let {
+                    shootError(it, requestId)
+                }
             }, ErrorModel::class.java)
             .exception {
                 shootError(it, requestId)
@@ -139,10 +152,10 @@ abstract class SaizadBaseViewModel(
     fun activityResult(requestCode: Int): Observable<ActivityResult<*>> {
         return activityResult
             .filter { it.isOk }
-            .filter { result: ActivityResult<*> ->
-                result.isRequestCode(requestCode)
+            .filter {
+                it.isRequestCode(requestCode)
             }
-            .doOnNext { result: ActivityResult<*>? ->
+            .doOnNext {
                 activityResult.onNext(
                     ActivityResult<Any>(3321235, 1, null)
                 )
@@ -162,7 +175,7 @@ abstract class SaizadBaseViewModel(
             .subscribe({
                 activityResultLiveData.setValue(it)
             }
-            ) { }
+            ) {}
         )
         return activityResultLiveData
     }
@@ -171,12 +184,8 @@ abstract class SaizadBaseViewModel(
         val activityResultLiveData = MutableLiveData<V>()
         disposable.add(activityResult(requestCode, cast)
             .subscribe(
-                { value: V ->
-                    activityResultLiveData.setValue(
-                        value
-                    )
-                }
-            ) { }
+                { activityResultLiveData.setValue(it) }
+            ) {}
         )
         return activityResultLiveData
     }
@@ -191,20 +200,8 @@ abstract class SaizadBaseViewModel(
     }
 
     @CallSuper
-    fun onDestroyView() {
+    open fun onDestroyView() {
         disposable.dispose()
-    }
-
-    fun errorLiveData(): LiveData<ErrorData> {
-        return errorLiveData
-    }
-
-    fun loadingLiveData(): MutableLiveData<LoadingData> {
-        return loadingLiveData
-    }
-
-    fun apiErrorLiveData(): MutableLiveData<ApiErrorData> {
-        return apiErrorLiveData
     }
 
     @CallSuper
@@ -221,23 +218,20 @@ abstract class SaizadBaseViewModel(
 
     protected fun shootError(errorModel: ErrorModel, id: Int) {
         val value = ApiErrorData(ApiErrorException(errorModel), id)
-        Handler(Looper.getMainLooper())
-            .post { apiErrorLiveData.setValue(value) }
+        apiErrorLiveData.postValue(value)
     }
 
     protected fun shootError(throwable: Throwable, id: Int) {
         val value = ErrorData(throwable, id)
-        Handler(Looper.getMainLooper())
-            .post { errorLiveData.setValue(value) }
+        errorLiveData.postValue(value)
     }
 
     protected fun shootLoading(loading: Boolean, id: Int) {
         val value = LoadingData(loading, id)
-        Handler(Looper.getMainLooper())
-            .post { loadingLiveData.setValue(value) }
+        loadingLiveData.postValue(value)
     }
 
-    fun navigationFragmentResult(activityResult: ActivityResult<*>){
+    fun navigationFragmentResult(activityResult: ActivityResult<*>) {
         environment.activityResultBehaviorSubject.onNext(activityResult)
     }
 
@@ -245,18 +239,6 @@ abstract class SaizadBaseViewModel(
         fun isThisRequest(id: Int): Boolean {
             return this.id == id
         }
-
-        val isDiscarded: Boolean
-            get() = DISCARDED_ID == id
-
-        fun discard() {
-            id = DISCARDED_ID
-        }
-
-        companion object {
-            private const val DISCARDED_ID = 3412341
-        }
-
     }
 
     class ApiErrorData(val apiErrorException: ApiErrorException, id: Int) :
@@ -267,10 +249,5 @@ abstract class SaizadBaseViewModel(
     class LoadingData(val isLoading: Boolean, id: Int) : LiveDataStatus(id)
 
     class ApiErrorException(val errorModel: ErrorModel) :
-        Exception(Throwable(errorModel.error.message)) {
-
-        val error: ErrorModel.Error
-            get() = errorModel.error
-
-    }
+        Exception(Throwable(errorModel.error.message))
 }

@@ -1,8 +1,12 @@
 package com.saizad.mvvmexample.components.auth.login
 
 import android.os.Bundle
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
+import com.saizad.mvvm.utils.lifecycleScopeOnMainWithDelay
 import com.saizad.mvvm.utils.startActivity
 import com.saizad.mvvm.utils.throttleClick
 import com.saizad.mvvmexample.R
@@ -25,17 +29,35 @@ class LoginFragment : AuthFragment<LoginViewModel>() {
             })
         }
 
-        viewModel().loginFormLiveData.observe(viewLifecycleOwner, Observer {
-            emailField.setField(it.emailField)
-            passwordField.setField(it.passwordField)
-            it.validObservable()
+        lifecycleScopeOnMainWithDelay(1000) {
+            passwordField.getEditText().transformationMethod =
+                PasswordTransformationMethod.getInstance()
+        }
+
+        viewModel().loginFormLiveData.observe(viewLifecycleOwner, Observer { emailLoginForm ->
+            emailField.setField(emailLoginForm.emailField)
+            passwordField.setField(emailLoginForm.passwordField)
+            emailLoginForm.emailField.observable()
                 .subscribe {
+                    log("Email value -> ${emailLoginForm.emailField.field}")
+                }
+            emailLoginForm.validObservable()
+                .subscribe {
+                    log("Email value form(isValid = $it) -> ${emailLoginForm.emailField.field}")
                     goToMain.isEnabled = it
                 }
         })
+
+        view.throttleClick {
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToBlankFragment())
+        }
     }
 
     override fun layoutRes(): Int {
         return R.layout.fragment_login
+    }
+
+    override fun persistView(): Boolean {
+        return false
     }
 }

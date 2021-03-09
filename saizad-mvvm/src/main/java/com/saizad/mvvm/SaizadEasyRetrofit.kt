@@ -12,8 +12,10 @@ class SaizadEasyRetrofit(
     protected val application: Application,
     protected val currentUser: CurrentUserType<*>,
     protected val gson: Gson,
-    protected val domainUrl: String
+    protected val domainUrl: String,
+    val isDebugMode: Boolean = false
 ) : EasyRetrofit(application) {
+
     override fun retrofitBuilderReady(retrofitBuilder: Retrofit.Builder): Retrofit.Builder {
         return retrofitBuilder
             .baseUrl(domainUrl)
@@ -24,7 +26,7 @@ class SaizadEasyRetrofit(
     }
 
     override fun easyRetrofitClient(): EasyRetrofitClient {
-        return SaizadEasyRetrofitClient(provideApplication(), currentUser)
+        return SaizadEasyRetrofitClient(provideApplication(), currentUser, isDebugMode)
     }
 
 }
