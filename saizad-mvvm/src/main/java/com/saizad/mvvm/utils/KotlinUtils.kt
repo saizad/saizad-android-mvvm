@@ -20,6 +20,7 @@ import com.google.android.material.chip.ChipGroup
 import com.jakewharton.rxbinding2.view.RxView
 import com.saizad.mvvm.components.SaizadBaseFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.*
 import org.joda.time.DateTime
@@ -213,4 +214,8 @@ val Activity.hideKeyboard: Unit
 
 fun Disposable.addToComposite(saizadBaseFragment: SaizadBaseFragment<*>){
     saizadBaseFragment.compositeDisposable().add(this)
+}
+
+fun Disposable.addToDisposable(disposable: CompositeDisposable) {
+    disposable.add(this)
 }

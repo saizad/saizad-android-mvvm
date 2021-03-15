@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.saizad.mvvmexample.components.main.users.ReqResUserItem xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corners_bg"
+    android:backgroundTint="@color/grey_50"
+    android:padding="@dimen/space_1x"
+    tools:layout_marginTop="@dimen/space_1x">
+
+    <ImageView
+        android:id="@+id/avatar"
+        android:layout_width="@dimen/space_8x"
+        android:layout_height="@dimen/space_8x"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/fullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@tools:sample/full_names" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/avatar"
+        app:layout_constraintTop_toBottomOf="@+id/fullName"
+        tools:text="test.mymail@gmail.com" />
+</com.saizad.mvvmexample.components.main.users.ReqResUserItem>

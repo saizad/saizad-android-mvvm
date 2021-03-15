@@ -11,6 +11,8 @@ data class ReqResUser(
 		val USER = ReqResUser(1, "John", "Ford", "john.ford@gmail.com", "https://reqres.in/img/faces/2-image.jpg")
 	}
 
+	val fullName : String
+		get() = "$firstName $lastName"
 
 }
 

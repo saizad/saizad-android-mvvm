@@ -1,12 +1,12 @@
 package com.saizad.mvvm.components
 
+import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.common.util.ArrayUtils
-import com.google.gson.Gson
 import com.sa.easyandroidform.ObjectUtils
 import com.saizad.mvvm.ActivityResult
 import com.saizad.mvvm.BaseNotificationModel
@@ -71,11 +71,11 @@ abstract class SaizadBaseViewModel(
         requestId: Int
     ): LiveData<IntPageDataModel<M>> {
         val mutableLiveData = MutableLiveData<IntPageDataModel<M>>()
-        request(observable, requestId) {
-            val data = this.body()!!
-            callback.call(data)
-            mutableLiveData.setValue(data)
-        }.subscribe()
+        request(observable, requestId)
+            .doOnError { errorCallback.invoke(it) }
+            .subscribe {
+                callback.call(it)
+            }
         return mutableLiveData
     }
 
@@ -130,7 +130,9 @@ abstract class SaizadBaseViewModel(
         response: Response<M>.() -> Unit = {},
         errorResponse: Response<M>.() -> Unit = {}
     ): Observable<M> {
+        Log.d("sadfasdfasdfa", "true -- Request Id -> $requestId")
         shootLoading(true, requestId)
+        Log.d("sadfasdfasdfa-post", "true -- Request Id -> $requestId")
         return observable
             .successResponse { response.invoke(it) }
             .timeoutException { shootError(it, requestId) }
@@ -146,7 +148,9 @@ abstract class SaizadBaseViewModel(
             .exception {
                 shootError(it, requestId)
             }
-            .doFinally { shootLoading(false, requestId) }
+            .doFinally {
+                Log.d("sadfasdfasdfa", "false -- Request Id -> $requestId")
+                shootLoading(false, requestId) }
     }
 
     fun activityResult(requestCode: Int): Observable<ActivityResult<*>> {

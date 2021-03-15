@@ -3,20 +3,14 @@ package com.saizad.mvvmexample.components.main.home
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
-import com.saizad.mvvm.ActivityResult
-import com.saizad.mvvm.SaizadLocation
-import com.saizad.mvvm.model.UserInfo
+import androidx.navigation.fragment.findNavController
 import com.saizad.mvvm.utils.throttleClick
 import com.saizad.mvvmexample.R
-import com.saizad.mvvmexample.components.auth.AuthFragment
 import com.saizad.mvvmexample.components.main.MainFragment
-import com.saizad.mvvmexample.di.auth.AuthEnvironment
+import com.saizad.mvvmexample.components.main.users.ReqResUserItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.goToMain
-import javax.inject.Inject
-import javax.inject.Named
 
 @AndroidEntryPoint
 class HomeFragment : MainFragment<HomeViewModel>() {
@@ -29,6 +23,21 @@ class HomeFragment : MainFragment<HomeViewModel>() {
         goToMain.throttleClick {
             requireActivity().finish()
         }
+
+        viewModel().delayed(2).observe(viewLifecycleOwner, Observer {
+            showShortToast(it.size)
+        })
+        val reqResUserItem = currentUser as ReqResUserItem
+
+        viewModel().user(1).observe(viewLifecycleOwner, Observer {
+            reqResUserItem.bind(it)
+        })
+
+        users.throttleClick {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToUsersFragment())
+        }
+
+
     }
 
     override fun layoutRes(): Int {

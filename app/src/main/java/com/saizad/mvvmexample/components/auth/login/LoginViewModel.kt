@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.saizad.mvvm.model.LoginBody
+import com.saizad.mvvmexample.ApiRequestCodes
 import com.saizad.mvvmexample.components.auth.AuthViewModel
 import com.saizad.mvvmexample.di.auth.AuthEnvironment
 import com.saizad.mvvmexample.models.ApiError
@@ -35,7 +36,7 @@ class LoginViewModel @Inject constructor(
         loginFormLiveData.postValue(form)
     }
 
-    fun login(): LiveData<LoginResponse> {
-        return mVVMExampleRequest(api.login(form.requiredBuild()), 1)
+    fun login(requestId: Int = ApiRequestCodes.LOGIN): LiveData<LoginResponse> {
+        return mVVMExampleRequest(api.login(form.requiredBuild()), requestId)
     }
 }
