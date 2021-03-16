@@ -5,33 +5,34 @@
     android:layout_height="match_parent"
     android:padding="@dimen/space_1x">
 
-    <include
-        android:id="@+id/currentUser"
-        layout="@layout/item_req_res_user"
+    <com.saizad.mvvm.components.form.ui.StringInputFieldView
+        android:id="@+id/fullNameField"
         android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
+        android:theme="@style/FullNameTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/users"
-        android:layout_width="0dp"
+    <com.saizad.mvvm.components.form.ui.StringInputFieldView
+        android:id="@+id/jobField"
+        android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="List of users"
+        android:layout_marginTop="@dimen/space_1x"
+        android:theme="@style/JobTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/currentUser" />
+        app:layout_constraintTop_toBottomOf="@id/fullNameField" />
 
 
     <Button
-        android:id="@+id/logout"
-        android:layout_width="wrap_content"
+        android:id="@+id/save"
+        android:layout_width="@dimen/zero"
         android:layout_height="wrap_content"
-        android:text="Logout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="@dimen/space_3x"
+        android:text="Save"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/jobField" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

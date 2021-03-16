@@ -1,13 +1,12 @@
 package com.saizad.mvvmexample.components.auth.login
 
 import android.os.Bundle
-import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.saizad.mvvm.utils.lifecycleScopeOnMainWithDelay
-import com.saizad.mvvm.utils.startActivity
+import com.saizad.mvvm.utils.startActivityClear
 import com.saizad.mvvm.utils.throttleClick
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.auth.AuthFragment
@@ -23,9 +22,12 @@ class LoginFragment : AuthFragment<LoginViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?, recycled: Boolean) {
 
-        goToMain.throttleClick {
+        logout.throttleClick {
             viewModel().login().observe(viewLifecycleOwner, Observer {
-                context().startActivity<MainActivity>()
+                viewModel().user((1..10).random()).observe(viewLifecycleOwner, Observer {
+                    currentUserType.refresh(it)
+                    context().startActivityClear<MainActivity>()
+                })
             })
         }
 
@@ -37,14 +39,9 @@ class LoginFragment : AuthFragment<LoginViewModel>() {
         viewModel().loginFormLiveData.observe(viewLifecycleOwner, Observer { emailLoginForm ->
             emailField.setField(emailLoginForm.emailField)
             passwordField.setField(emailLoginForm.passwordField)
-            emailLoginForm.emailField.observable()
-                .subscribe {
-                    log("Email value -> ${emailLoginForm.emailField.field}")
-                }
             emailLoginForm.validObservable()
                 .subscribe {
-                    log("Email value form(isValid = $it) -> ${emailLoginForm.emailField.field}")
-                    goToMain.isEnabled = it
+                    logout.isEnabled = it
                 }
         })
 

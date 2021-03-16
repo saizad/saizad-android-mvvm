@@ -19,6 +19,8 @@ import com.saizad.mvvm.LoadingDialog
 import com.saizad.mvvm.SaizadLocation.GPSOffException
 import com.saizad.mvvm.components.SaizadBaseViewModel
 import com.saizad.mvvm.components.SaizadBaseViewModel.*
+import com.saizad.mvvm.utils.addToDisposable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import rx.functions.Action1
 
@@ -202,24 +204,23 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
         compositeDisposable = CompositeDisposable()
         log("onViewReady")
 
-        viewModel.errorLiveData.observe(
-            appLifecycleDelegate.lifecycleOwner,
-            Observer {
+        viewModel.errorSubject
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
                 baseLifecycleCallBack.requestError(it)
-            }
-        )
-        viewModel.apiErrorLiveData.observe(
-            appLifecycleDelegate.lifecycleOwner,
-            Observer {
+            }.addToDisposable(compositeDisposable)
+
+        viewModel.apiErrorSubject
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe{
                 baseLifecycleCallBack.requestApiError(it)
-            }
-        )
-        viewModel.loadingLiveData.observe(
-            appLifecycleDelegate.lifecycleOwner,
-            Observer {
+            }.addToDisposable(compositeDisposable)
+
+        viewModel.loadingSubject
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
                 baseLifecycleCallBack.requestLoading(it)
-            }
-        )
+            }.addToDisposable(compositeDisposable)
     }
 
     override fun viewModel(): SaizadBaseViewModel {

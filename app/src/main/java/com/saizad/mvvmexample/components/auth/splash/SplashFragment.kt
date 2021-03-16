@@ -2,15 +2,13 @@ package com.saizad.mvvmexample.components.auth.splash
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
+import com.saizad.mvvm.utils.addToDisposable
+import com.saizad.mvvm.utils.startActivityClear
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.auth.AuthFragment
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
-import androidx.navigation.fragment.findNavController
-import com.saizad.mvvm.model.UserInfo
-import com.saizad.mvvm.utils.lifecycleScopeOnMainWithDelay
+import com.saizad.mvvmexample.components.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
-import io.reactivex.android.schedulers.AndroidSchedulers
 
 @AndroidEntryPoint
 class SplashFragment : AuthFragment<SplashViewModel>() {
@@ -19,15 +17,14 @@ class SplashFragment : AuthFragment<SplashViewModel>() {
         get() = SplashViewModel::class.java
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?, recycled: Boolean) {
-        lifecycleScopeOnMainWithDelay(100){
-            findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment(
-                UserInfo().apply {
-                    this.userName = "hello"
-                    this.email = "asdfad@gmail.com"
-                    this.mobile = "9999999999"
+        currentUserType.isLoggedIn
+            .subscribe {
+                if (!it) {
+                    findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment())
+                } else {
+                    context().startActivityClear<MainActivity>()
                 }
-            ))
-        }
+            }.addToDisposable(compositeDisposable())
     }
 
     override fun layoutRes(): Int {

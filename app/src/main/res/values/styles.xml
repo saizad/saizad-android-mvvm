@@ -75,4 +75,30 @@
         <item name="textInputLayoutStyle">@style/PasswordTextInputLayoutStyle</item>
         <item name="textInputEditTextStyle">@style/PasswordEditTextStyle</item>
     </style>
+
+    <style name="FullNameInputLayoutStyle" parent="TextInputLayoutStyle">
+        <item name="android:hint">Full Name</item>
+    </style>
+
+    <style name="FullNameInputEditTextStyle" parent="TextInputEditTextStyle">
+        <item name="android:inputType">textPersonName</item>
+    </style>
+
+    <style name="FullNameTheme" parent="TextInputTheme">
+        <item name="textInputLayoutStyle">@style/FullNameInputLayoutStyle</item>
+        <item name="textInputEditTextStyle">@style/FullNameInputEditTextStyle</item>
+    </style>
+
+    <style name="JobInputLayoutStyle" parent="TextInputLayoutStyle">
+        <item name="android:hint">Job</item>
+    </style>
+
+    <style name="JobInputEditTextStyle" parent="TextInputEditTextStyle">
+        <item name="android:inputType">textCapWords</item>
+    </style>
+
+    <style name="JobTheme" parent="TextInputTheme">
+        <item name="textInputLayoutStyle">@style/JobInputLayoutStyle</item>
+        <item name="textInputEditTextStyle">@style/JobInputEditTextStyle</item>
+    </style>
 </resources>

@@ -1,6 +1,5 @@
 package com.saizad.mvvm.components
 
-import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -15,7 +14,6 @@ import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.model.DataModel
 import com.saizad.mvvm.model.ErrorModel
 import com.saizad.mvvm.model.IntPageDataModel
-import com.shopify.livedataktx.SingleLiveData
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -35,9 +33,9 @@ abstract class SaizadBaseViewModel(
         environment.notificationBehaviorSubject
 
     protected var disposable = CompositeDisposable()
-    val loadingLiveData = SingleLiveData<LoadingData>()
-    val errorLiveData = SingleLiveData<ErrorData>()
-    val apiErrorLiveData = SingleLiveData<ApiErrorData>()
+    val loadingSubject = BehaviorSubject.create<LoadingData>()
+    val errorSubject = BehaviorSubject.create<ErrorData>()
+    val apiErrorSubject = BehaviorSubject.create<ApiErrorData>()
     var currentUser = MutableLiveData<Any>()
 
     fun <T : BaseNotificationModel?> notificationListener(notificationType: Array<String>?): LiveData<T> {
@@ -130,9 +128,7 @@ abstract class SaizadBaseViewModel(
         response: Response<M>.() -> Unit = {},
         errorResponse: Response<M>.() -> Unit = {}
     ): Observable<M> {
-        Log.d("sadfasdfasdfa", "true -- Request Id -> $requestId")
         shootLoading(true, requestId)
-        Log.d("sadfasdfasdfa-post", "true -- Request Id -> $requestId")
         return observable
             .successResponse { response.invoke(it) }
             .timeoutException { shootError(it, requestId) }
@@ -149,8 +145,8 @@ abstract class SaizadBaseViewModel(
                 shootError(it, requestId)
             }
             .doFinally {
-                Log.d("sadfasdfasdfa", "false -- Request Id -> $requestId")
-                shootLoading(false, requestId) }
+                shootLoading(false, requestId)
+            }
     }
 
     fun activityResult(requestCode: Int): Observable<ActivityResult<*>> {
@@ -222,17 +218,17 @@ abstract class SaizadBaseViewModel(
 
     protected fun shootError(errorModel: ErrorModel, id: Int) {
         val value = ApiErrorData(ApiErrorException(errorModel), id)
-        apiErrorLiveData.postValue(value)
+        apiErrorSubject.onNext(value)
     }
 
     protected fun shootError(throwable: Throwable, id: Int) {
         val value = ErrorData(throwable, id)
-        errorLiveData.postValue(value)
+        errorSubject.onNext(value)
     }
 
     protected fun shootLoading(loading: Boolean, id: Int) {
         val value = LoadingData(loading, id)
-        loadingLiveData.postValue(value)
+        loadingSubject.onNext(value)
     }
 
     fun navigationFragmentResult(activityResult: ActivityResult<*>) {

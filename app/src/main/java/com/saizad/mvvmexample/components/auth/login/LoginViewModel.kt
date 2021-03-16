@@ -11,6 +11,7 @@ import com.saizad.mvvmexample.components.auth.AuthViewModel
 import com.saizad.mvvmexample.di.auth.AuthEnvironment
 import com.saizad.mvvmexample.models.ApiError
 import com.saizad.mvvmexample.models.LoginResponse
+import com.saizad.mvvmexample.models.ReqResUser
 import com.shopify.livedataktx.SingleLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,5 +39,9 @@ class LoginViewModel @Inject constructor(
 
     fun login(requestId: Int = ApiRequestCodes.LOGIN): LiveData<LoginResponse> {
         return mVVMExampleRequest(api.login(form.requiredBuild()), requestId)
+    }
+
+    fun user(user: Int, requestId: Int = ApiRequestCodes.USER): LiveData<ReqResUser> {
+        return liveData(api.user(user), requestId)
     }
 }

@@ -22,9 +22,6 @@ class LoadingDialog(
             requestCounter = requestCounter.coerceAtLeast(0)
         }
 
-
-        Log.d("sadfasdfasdfa", "$show == $requestCounter")
-
         if (show && requestCounter == 1) {
             show()
         } else if (!show && requestCounter == 0) {

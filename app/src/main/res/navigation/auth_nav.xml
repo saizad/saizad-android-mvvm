@@ -25,9 +25,6 @@
         android:name="com.saizad.mvvmexample.components.auth.login.LoginFragment"
         android:label=""
         tools:layout="@layout/fragment_login">
-        <argument
-            android:name="user"
-            app:argType="com.saizad.mvvm.model.UserInfo" />
         <action
             android:id="@+id/action_loginFragment_to_blankFragment"
             app:destination="@id/blankFragment" />

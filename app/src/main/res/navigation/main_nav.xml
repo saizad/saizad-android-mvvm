@@ -17,11 +17,27 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_updateUserFragment"
+            app:destination="@id/updateUserFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/usersFragment"
         android:name="com.saizad.mvvmexample.components.main.users.UsersFragment"
         android:label="Users"
         android:layout="@layout/fragment_users" />
+    <fragment
+        android:id="@+id/updateUserFragment"
+        android:name="com.saizad.mvvmexample.components.main.profile.updateuser.UpdateUserFragment"
+        android:label="UpdateUser"
+        android:layout="@layout/fragment_update_user" >
+        <argument
+            android:name="user"
+            app:argType="com.saizad.mvvmexample.models.ReqResUser" />
+    </fragment>
 
 </navigation>
