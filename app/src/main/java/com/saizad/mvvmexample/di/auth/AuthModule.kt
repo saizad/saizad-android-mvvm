@@ -6,13 +6,10 @@ import com.saizad.mvvmexample.api.AuthApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import io.reactivex.subjects.BehaviorSubject
 import sa.zad.easypermission.PermissionManager
 import javax.inject.Named
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

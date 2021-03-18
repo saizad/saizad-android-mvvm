@@ -1,6 +1,7 @@
 package com.saizad.mvvmexample.components.main
 
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.saizad.mvvm.utils.addToDisposable
@@ -30,8 +31,8 @@ class MainActivity : MVVMExampleActivity<MainActivityViewModel>() {
         super.onViewReady()
         viewModel().currentUserType
             .loggedOutUser()
-            .subscribe {
+            .observe(this, Observer {
                 startActivityClear<AuthActivity>()
-            }.addToDisposable(compositeDisposable())
+            })
     }
 }

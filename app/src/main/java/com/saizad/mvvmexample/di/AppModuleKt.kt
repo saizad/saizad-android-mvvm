@@ -12,7 +12,6 @@ import com.saizad.mvvmexample.api.BackgroundApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import io.reactivex.subjects.BehaviorSubject
 import sa.zad.easypermission.AppPermission
@@ -51,12 +50,6 @@ object AppModuleKt {
             notifyOnceBehaviorSubject,
             permissionManager
         )
-    }
-
-    @Singleton
-    @Provides
-    fun providesMVVMExampleCurrentUser(sharedPreferences: SharedPreferences, gson: Gson): MVVMExampleCurrentUser {
-        return MVVMExampleCurrentUser(sharedPreferences, gson)
     }
 
     @Singleton

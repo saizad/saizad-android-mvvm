@@ -36,7 +36,6 @@ abstract class SaizadBaseViewModel(
     val loadingSubject = BehaviorSubject.create<LoadingData>()
     val errorSubject = BehaviorSubject.create<ErrorData>()
     val apiErrorSubject = BehaviorSubject.create<ApiErrorData>()
-    var currentUser = MutableLiveData<Any>()
 
     fun <T : BaseNotificationModel?> notificationListener(notificationType: Array<String>?): LiveData<T> {
         val notificationModelMutableLiveData = MutableLiveData<T>()
@@ -207,13 +206,6 @@ abstract class SaizadBaseViewModel(
     @CallSuper
     open fun onViewCreated() {
         disposable = CompositeDisposable()
-        disposable.add(
-            environment.currentUser.observable()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    currentUser.setValue(it)
-                }
-        )
     }
 
     protected fun shootError(errorModel: ErrorModel, id: Int) {

@@ -2,8 +2,8 @@ package com.saizad.mvvmexample.components.auth.splash
 
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.saizad.mvvm.utils.addToDisposable
 import com.saizad.mvvm.utils.startActivityClear
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.auth.AuthFragment
@@ -18,13 +18,13 @@ class SplashFragment : AuthFragment<SplashViewModel>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?, recycled: Boolean) {
         currentUserType.isLoggedIn
-            .subscribe {
+            .observe(viewLifecycleOwner, Observer {
                 if (!it) {
                     findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment())
                 } else {
                     context().startActivityClear<MainActivity>()
                 }
-            }.addToDisposable(compositeDisposable())
+            })
     }
 
     override fun layoutRes(): Int {

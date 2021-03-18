@@ -3,11 +3,13 @@ package com.saizad.mvvmexample.components.main.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.saizad.mvvmexample.ApiRequestCodes
 import com.saizad.mvvmexample.components.main.MainViewModel
 import com.saizad.mvvmexample.di.main.MainEnvironment
 import com.saizad.mvvmexample.models.ReqResUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,7 +27,9 @@ class HomeViewModel @Inject constructor(
 
     fun logout(): LiveData<Void>{
         val mutableLiveData = MutableLiveData<Void>()
-        currentUserType.logout()
+        viewModelScope.launch {
+            currentUserType.logout()
+        }
         return mutableLiveData
     }
 }

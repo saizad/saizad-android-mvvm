@@ -7,7 +7,6 @@ import androidx.work.Configuration
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.saizad.mvvm.CurrentUserType
 import com.saizad.mvvm.SaizadApplication
 import com.saizad.mvvmexample.service.LocationWorker
 import dagger.hilt.android.HiltAndroidApp

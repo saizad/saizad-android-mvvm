@@ -12,9 +12,9 @@ import sa.zad.easyretrofit.EasyRetrofitClient
 import java.net.URLDecoder
 
 class SaizadEasyRetrofitClient(
-    protected val application: Application,
-    protected val currentUser: CurrentUserType<*>,
-    val isDebugMode: Boolean = false
+    application: Application,
+    private val currentUser: CurrentUserType<*>,
+    private val isDebugMode: Boolean = false
 ) : EasyRetrofitClient(application) {
 
     override fun builderReady(builder: OkHttpClient.Builder): OkHttpClient.Builder {

@@ -1,7 +1,5 @@
 package com.saizad.mvvmexample.components
 
-import com.saizad.mvvm.CurrentUserType
-import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
 import com.saizad.mvvm.pager.BasePage
 import com.saizad.mvvmexample.MVVMExampleCurrentUser

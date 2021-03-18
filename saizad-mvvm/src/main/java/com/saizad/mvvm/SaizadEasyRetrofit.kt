@@ -9,11 +9,11 @@ import sa.zad.easyretrofit.EasyRetrofit
 import sa.zad.easyretrofit.EasyRetrofitClient
 
 class SaizadEasyRetrofit(
-    protected val application: Application,
-    protected val currentUser: CurrentUserType<*>,
-    protected val gson: Gson,
-    protected val domainUrl: String,
-    val isDebugMode: Boolean = false
+    application: Application,
+    private val currentUser: CurrentUserType<*>,
+    private val gson: Gson,
+    private val domainUrl: String,
+    private val isDebugMode: Boolean = false
 ) : EasyRetrofit(application) {
 
     override fun retrofitBuilderReady(retrofitBuilder: Retrofit.Builder): Retrofit.Builder {

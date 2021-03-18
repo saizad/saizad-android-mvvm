@@ -13,7 +13,6 @@ import dagger.hilt.components.SingletonComponent
 import io.reactivex.subjects.BehaviorSubject
 import sa.zad.easypermission.PermissionManager
 import javax.inject.Named
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

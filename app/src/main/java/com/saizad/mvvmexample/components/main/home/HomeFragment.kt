@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
 @AndroidEntryPoint
 class HomeFragment : MainFragment<HomeViewModel>() {
 
-    val reqResUserItem by lazy { currentUser as ReqResUserItem }
+    private val reqResUserItem by lazy { currentUser as ReqResUserItem }
 
     override val viewModelClassType: Class<HomeViewModel>
         get() = HomeViewModel::class.java
@@ -36,9 +36,7 @@ class HomeFragment : MainFragment<HomeViewModel>() {
             showShortToast(it.size)
         })
 
-        currentUserType
-        viewModel().currentUser
-            .map { it as ReqResUser }
+        currentUserType.loggedInUser()
             .observe(viewLifecycleOwner, Observer {
                 bindUserInfo(it)
             })
@@ -46,7 +44,6 @@ class HomeFragment : MainFragment<HomeViewModel>() {
         users.throttleClick {
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToUsersFragment())
         }
-
 
     }
 
