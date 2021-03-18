@@ -3,8 +3,8 @@ package com.saizad.mvvmexample.components.main.home
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
-import androidx.lifecycle.map
 import androidx.navigation.fragment.findNavController
+import com.saizad.mvvm.ActivityResult
 import com.saizad.mvvm.utils.throttleClick
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainFragment

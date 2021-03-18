@@ -30,11 +30,7 @@ abstract class CurrentUserType<U> protected constructor(
                 .drop(1)
                 .collect {
                     user = it
-                    if (it == null) {
-                        dataStoreWrapper.remove(KEY_USER_INFO)
-                    } else {
-                        dataStoreWrapper.putObject(KEY_USER_INFO, it as Any)
-                    }
+                    dataStoreWrapper.putObject(KEY_USER_INFO, it)
                 }
         }
 

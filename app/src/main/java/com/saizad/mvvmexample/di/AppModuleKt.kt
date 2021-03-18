@@ -84,12 +84,4 @@ object AppModuleKt {
     fun providesBackgroundApi(saizadEasyRetrofit: SaizadEasyRetrofit): BackgroundApi {
         return saizadEasyRetrofit.provideRetrofit().create(BackgroundApi::class.java)
     }
-
-    @Singleton
-    @Provides
-    fun providesObjectPreference(
-        sharedPreferences: SharedPreferences, gson: Gson
-    ): ObjectPreference {
-        return ObjectPreference(sharedPreferences, gson)
-    }
 }

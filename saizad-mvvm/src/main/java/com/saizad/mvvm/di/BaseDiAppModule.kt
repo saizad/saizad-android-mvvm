@@ -3,13 +3,15 @@ package com.saizad.mvvm.di
 import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.saizad.mvvm.ActivityResult
-import com.saizad.mvvm.FCMToken
 import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.SaizadLocation
+import com.shopify.livedataktx.SingleLiveData
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,12 +28,6 @@ object BaseDiAppModule {
     @Provides
     fun providesAppLocation(application: Application): SaizadLocation {
         return SaizadLocation(application)
-    }
-
-    @Singleton
-    @Provides
-    fun providesFCMToken(sharedPreferences: SharedPreferences, gson: Gson): FCMToken {
-        return FCMToken(sharedPreferences, gson)
     }
 
     @Singleton

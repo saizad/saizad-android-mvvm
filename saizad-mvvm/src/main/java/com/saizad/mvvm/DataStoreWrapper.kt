@@ -26,10 +26,14 @@ class DataStoreWrapper @Inject constructor(
         }
     }
 
-    suspend fun putValue(prefKey: String, value: String) {
-        val key = stringPreferencesKey(prefKey)
-        context.dataStore.edit {
-            it[key] = value
+    suspend fun putValue(prefKey: String, value: String?) {
+        if (value == null) {
+            remove(prefKey)
+        } else {
+            val key = stringPreferencesKey(prefKey)
+            context.dataStore.edit {
+                it[key] = value
+            }
         }
     }
 
@@ -40,18 +44,22 @@ class DataStoreWrapper @Inject constructor(
         }
     }
 
-    suspend fun putObject(prefKey: String, value: Any) {
-        putValue(prefKey, gson.toJson(value))
+    suspend fun putObject(prefKey: String, value: Any?) {
+        if (value == null) {
+            remove(prefKey)
+        } else {
+            putValue(prefKey, gson.toJson(value))
+        }
     }
 
-    suspend fun remove(prefKey: String){
+    suspend fun remove(prefKey: String) {
         val key = stringPreferencesKey(prefKey)
         context.dataStore.edit {
             it.remove(key)
         }
     }
 
-    suspend fun removeAll(){
+    suspend fun removeAll() {
         context.dataStore.edit {
             it.clear()
         }
