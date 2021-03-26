@@ -99,7 +99,6 @@ class FragmentAppLifecycleDelegateImp<V : SaizadBaseViewModel>(
     override fun onDestroyView() {
         log("onDestroyView")
         compositeDisposable().dispose()
-        loadingDialog.dismiss()
         viewModel.onDestroyView()
     }
 

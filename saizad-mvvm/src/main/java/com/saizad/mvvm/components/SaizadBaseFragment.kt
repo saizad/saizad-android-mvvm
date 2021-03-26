@@ -20,9 +20,7 @@ import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleCallBack
 import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleDelegate
 import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleDelegateImp
 import com.saizad.mvvm.delegation.fragment.FragmentCB
-import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.BehaviorSubject
 import rx.functions.Action1
 
 abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
@@ -214,7 +212,7 @@ abstract class SaizadBaseFragment<V : SaizadBaseViewModel> :
 
     override fun openFragment(
         @IdRes fragment: Int,
-        bundle: Bundle?,
+        bundle: Bundle.() -> Unit,
         navOptions: NavOptions?
     ) {
         delegate.openFragment(fragment, bundle, navOptions)

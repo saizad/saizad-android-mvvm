@@ -2,6 +2,7 @@ package com.saizad.mvvmexample.components.main.users
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,5 +33,13 @@ class UsersFragment : MainFragment<UsersViewModel>() {
                 )
             })
         })
+
+        list.setItemOnClickListener { item, itemView, itemIndex ->
+            findNavController().navigate(
+                UsersFragmentDirections.actionUsersFragmentToUserPageHostFragment(
+                    list.listAdapter.items.toTypedArray(), item
+                )
+            )
+        }
     }
 }

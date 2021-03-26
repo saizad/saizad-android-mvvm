@@ -14,4 +14,7 @@ interface MainApi {
 
     @GET("api/users/")
     fun delayedResponse(@Query("delay") delaySecs: Int): NeverErrorObservable<DataModel<List<ReqResUser>>>
+
+    @GET("/api/unknown/23")
+    fun resourceNotFound(): NeverErrorObservable<Void>
 }

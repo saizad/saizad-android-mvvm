@@ -3,20 +3,20 @@ package com.saizad.mvvm.di
 import android.app.Application
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.saizad.mvvm.ActivityResult
 import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.SaizadLocation
-import com.shopify.livedataktx.SingleLiveData
+import com.saizad.mvvm.components.SaizadBaseViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.scopes.ActivityScoped
 import dagger.hilt.components.SingletonComponent
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Named
 import javax.inject.Singleton
 

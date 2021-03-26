@@ -15,10 +15,14 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import com.google.android.material.chip.ChipGroup
 import com.jakewharton.rxbinding2.view.RxView
 import com.saizad.mvvm.components.SaizadBaseFragment
+import com.saizad.mvvm.enums.DataState
+import com.shopify.livedataktx.filter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -218,4 +222,9 @@ fun Disposable.addToComposite(saizadBaseFragment: SaizadBaseFragment<*>){
 
 fun Disposable.addToDisposable(disposable: CompositeDisposable) {
     disposable.add(this)
+}
+
+fun <R> LiveData<DataState<R>>.stateToData(): LiveData<R>{
+    return filter { it is DataState.Success<R> }
+        .map { (it as DataState.Success<R>).data }
 }

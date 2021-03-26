@@ -7,11 +7,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.annotation.CallSuper
 import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
@@ -32,11 +30,6 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
 
     lateinit var compositeDisposable: CompositeDisposable
     lateinit var viewModel: V
-
-
-    val loadingDialog: LoadingDialog by lazy {
-        LoadingDialog(appLifecycleDelegate.context())
-    }
 
     private fun getFragmentViewModel(viewModel: Class<V>): V {
         return ViewModelProvider(appLifecycleDelegate.viewModelStoreOwner()).get(viewModel)
@@ -85,11 +78,9 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
     }
 
     override fun requestLoading(loadingData: LoadingData) {
-        loadingDialog.show(loadingData.isLoading)
     }
 
     override fun showLoading(show: Boolean) {
-        loadingDialog.show(show)
     }
 
     override fun serverError(throwable: Throwable, requestId: Int): Boolean {
@@ -142,13 +133,13 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
     }
 
     override fun requestLocation(locationAction: Action1<Location>) {
-        loadingDialog.show(true)
+        showLoading(true)
         appLifecycleDelegate.appLocation()
             .getLastLocation({ location: Location ->
-                loadingDialog.show(false)
+                showLoading(false)
                 locationAction.call(location)
             }) { throwable: Throwable ->
-                loadingDialog.show(false)
+                showLoading(false)
                 var title = "Error"
                 var message = throwable.message
                 if (throwable is SecurityException) {
@@ -212,14 +203,8 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
 
         viewModel.apiErrorSubject
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{
-                baseLifecycleCallBack.requestApiError(it)
-            }.addToDisposable(compositeDisposable)
-
-        viewModel.loadingSubject
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                baseLifecycleCallBack.requestLoading(it)
+                baseLifecycleCallBack.requestApiError(it)
             }.addToDisposable(compositeDisposable)
     }
 
@@ -231,8 +216,8 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
         return compositeDisposable
     }
 
-    override fun openFragment(@IdRes fragment: Int, bundle: Bundle?, navOptions: NavOptions?) {
-        navController().navigate(fragment, bundle, navOptions)
+    override fun openFragment(fragment: Int, bundle: Bundle.() -> Unit, navOptions: NavOptions?) {
+        navController().navigate(fragment, Bundle().apply(bundle), navOptions)
     }
 
     override fun navController(): NavController {

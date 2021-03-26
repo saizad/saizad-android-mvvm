@@ -53,7 +53,7 @@ interface BaseLifecycleDelegate {
     fun navController(): NavController
     fun openFragment(
         @IdRes fragment: Int,
-        bundle: Bundle? = null,
+        bundle: Bundle.() -> Unit = {},
         navOptions: NavOptions? = null
     )
 

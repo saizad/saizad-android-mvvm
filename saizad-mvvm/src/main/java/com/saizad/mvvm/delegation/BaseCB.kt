@@ -6,7 +6,6 @@ import androidx.annotation.MenuRes
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
-import com.saizad.mvvm.Environment
 import com.saizad.mvvm.SaizadLocation
 import com.saizad.mvvm.components.SaizadBaseViewModel
 import sa.zad.easypermission.PermissionManager

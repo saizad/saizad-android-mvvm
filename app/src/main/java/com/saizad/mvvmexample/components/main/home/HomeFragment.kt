@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.saizad.mvvm.ActivityResult
+import com.saizad.mvvm.enums.DataState
+import com.saizad.mvvm.utils.stateToData
 import com.saizad.mvvm.utils.throttleClick
+import com.saizad.mvvmexample.ApiRequestCodes.DELAYED_RESPONSE
+import com.saizad.mvvmexample.ApiRequestCodes.LONG_DELAYED_RESPONSE
+import com.saizad.mvvmexample.ApiRequestCodes.SHORT_DELAYED_RESPONSE
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainFragment
 import com.saizad.mvvmexample.components.main.users.ReqResUserItem
@@ -28,13 +32,34 @@ class HomeFragment : MainFragment<HomeViewModel>() {
             viewModel().logout()
         }
 
-        viewModel().delayed(1).observe(viewLifecycleOwner, Observer {
-            showShortToast(it.size)
+        viewModel().resourceNotFound().observe(viewLifecycleOwner, Observer {
+            if (it is DataState.Error) {
+                showShortToast(it.throwable.message.toString())
+            }
         })
 
-        viewModel().delayed(2).observe(viewLifecycleOwner, Observer {
-            showShortToast(it.size)
-        })
+
+        viewModel().delayed(1, DELAYED_RESPONSE)
+            .observe(viewLifecycleOwner, Observer {
+                when (it) {
+                    is DataState.Success -> {
+                        showShortToast(it.data.size)
+                    }
+                    is DataState.Loading -> {
+                        if (it.isLoading) {
+                            showShortToast("Loading....")
+                        } else {
+                            showShortToast("Loading Completed!!")
+                        }
+                    }
+                }
+            })
+
+        viewModel().delayed(2, SHORT_DELAYED_RESPONSE)
+            .stateToData()
+            .observe(viewLifecycleOwner, Observer {
+                showShortToast(it.size)
+            })
 
         currentUserType.loggedInUser()
             .observe(viewLifecycleOwner, Observer {
@@ -42,6 +67,11 @@ class HomeFragment : MainFragment<HomeViewModel>() {
             })
 
         users.throttleClick {
+            viewModel().delayed(5, LONG_DELAYED_RESPONSE)
+                .stateToData()
+                .observe(viewLifecycleOwner, Observer {
+                    showShortToast(it.size)
+                })
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToUsersFragment())
         }
 

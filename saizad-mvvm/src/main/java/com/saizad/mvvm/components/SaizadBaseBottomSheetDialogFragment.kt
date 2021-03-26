@@ -19,9 +19,7 @@ import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleCallBack
 import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleDelegate
 import com.saizad.mvvm.delegation.fragment.FragmentAppLifecycleDelegateImp
 import com.saizad.mvvm.delegation.fragment.FragmentCB
-import io.reactivex.Scheduler
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.BehaviorSubject
 import rx.functions.Action1
 
 abstract class SaizadBaseBottomSheetDialogFragment<V : SaizadBaseViewModel> :
@@ -209,17 +207,9 @@ abstract class SaizadBaseBottomSheetDialogFragment<V : SaizadBaseViewModel> :
         return delegate.showAlertDialogYesNo(title, message, icon, positiveName, negativeName)
     }
 
-    fun openFragment(@IdRes fragment: Int) {
-        delegate.openFragment(fragment)
-    }
-
-    fun openFragment(@IdRes fragment: Int, bundle: Bundle?) {
-        delegate.openFragment(fragment, bundle)
-    }
-
     override fun openFragment(
         @IdRes fragment: Int,
-        bundle: Bundle?,
+        bundle: Bundle.() -> Unit,
         navOptions: NavOptions?
     ) {
         delegate.openFragment(fragment, bundle, navOptions)

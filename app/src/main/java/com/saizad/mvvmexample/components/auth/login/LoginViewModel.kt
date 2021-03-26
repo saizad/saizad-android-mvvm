@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
+import com.saizad.mvvm.enums.DataState
 import com.saizad.mvvm.model.LoginBody
 import com.saizad.mvvmexample.ApiRequestCodes
 import com.saizad.mvvmexample.components.auth.AuthViewModel
@@ -37,11 +38,11 @@ class LoginViewModel @Inject constructor(
         loginFormLiveData.postValue(form)
     }
 
-    fun login(requestId: Int = ApiRequestCodes.LOGIN): LiveData<LoginResponse> {
+    fun login(requestId: Int = ApiRequestCodes.LOGIN): LiveData<DataState<LoginResponse>> {
         return mVVMExampleRequest(api.login(form.requiredBuild()), requestId)
     }
 
-    fun user(user: Int, requestId: Int = ApiRequestCodes.USER): LiveData<ReqResUser> {
+    fun user(user: Int, requestId: Int = ApiRequestCodes.USER): LiveData<DataState<ReqResUser>> {
         return liveData(api.user(user), requestId)
     }
 }
