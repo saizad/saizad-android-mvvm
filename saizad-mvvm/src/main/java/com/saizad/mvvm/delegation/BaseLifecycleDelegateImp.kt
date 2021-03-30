@@ -67,12 +67,12 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
     }
 
     override fun requestApiError(apiErrorData: ApiErrorData) {
-        val error = apiErrorData.apiErrorException.errorModel.error
+        val error = apiErrorData.apiErrorException.errorModel
         val handel = baseLifecycleCallBack.serverError(
             apiErrorData.apiErrorException, apiErrorData.id
         )
         if (!handel) {
-            showAlertDialogOk(error.error, error.message)
+            showAlertDialogOk(error.error(), error.message())
         }
     }
 

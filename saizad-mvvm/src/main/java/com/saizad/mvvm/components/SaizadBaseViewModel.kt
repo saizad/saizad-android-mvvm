@@ -12,6 +12,7 @@ import com.saizad.mvvm.BaseNotificationModel
 import com.saizad.mvvm.Environment
 import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.enums.DataState
+import com.saizad.mvvm.model.BaseApiError
 import com.saizad.mvvm.model.ErrorModel
 import com.saizad.mvvm.model.IntPageDataModel
 import io.reactivex.Observable
@@ -90,39 +91,24 @@ abstract class SaizadBaseViewModel(
         return mutableLiveData
     }
 
-    fun liveDataNoResponse(
-        observable: NeverErrorObservable<Void>,
-        requestId: Int,
-        successResponse: () -> Unit = {},
-        errorResponse: Response<Void>.() -> Unit = {},
-    ): Flow<DataState<Void>> {
-        return flowData(observable, requestId, {
-            successResponse.invoke()
-            true
-        }, errorResponse)
-    }
-
     fun <M> liveData(
         observable: NeverErrorObservable<M>,
-        requestId: Int,
-        response: Response<M>.() -> Boolean = { false },
-        errorResponse: Response<M>.() -> Unit = {},
+        requestId: Int
     ): Flow<DataState<M>> {
-        return flowData(observable, requestId, response, errorResponse)
+        return flowData(observable, requestId, ErrorModel::class.java)
     }
 
-    open fun <M> flowData(
+    open fun <M, E: BaseApiError> flowData(
         observable: NeverErrorObservable<M>,
         requestId: Int,
-        response: Response<M>.() -> Boolean = { false },
-        errorResponse: Response<M>.() -> Unit = {},
+        eClass: Class<E>,
     ): Flow<DataState<M>> {
 
         val block: suspend ProducerScope<DataState<M>>.() -> Unit = {
-            val disposable = request(observable, requestId, response, errorResponse)
+            val disposable = baseRequest(observable, requestId, eClass)
                 .subscribe {
                     when (it) {
-                        is DataState.Success<M> -> {
+                        is DataState.Success -> {
                             offer(it)
                         }
                         is DataState.Loading -> {
@@ -149,9 +135,15 @@ abstract class SaizadBaseViewModel(
 
     fun <M> request(
         observable: NeverErrorObservable<M>,
+        requestId: Int
+    ): Observable<DataState<M>> {
+        return baseRequest(observable, requestId, ErrorModel::class.java)
+    }
+
+    fun <M, E : BaseApiError> baseRequest(
+        observable: NeverErrorObservable<M>,
         requestId: Int,
-        response: Response<M>.() -> Boolean = { false },
-        errorResponse: Response<M>.() -> Unit = {}
+        eClass: Class<E>
     ): Observable<DataState<M>> {
         val publishSubject = BehaviorSubject.create<DataState<M>>()
         val loadingData = LoadingData(true, requestId)
@@ -159,22 +151,15 @@ abstract class SaizadBaseViewModel(
         publishSubject.onNext(DataState.Loading(true))
         observable
             .successResponse {
-                if (!response.invoke(it)) {
-                    publishSubject.onNext(DataState.Success(it.body()!!))
-                }
+                publishSubject.onNext(DataState.Success(it.body()))
             }
             .timeoutException { shootError(publishSubject, it, requestId) }
             .connectionException { shootError(publishSubject, it, requestId) }
-            .failedResponse {
-                errorResponse.invoke(it)
-            }
             .apiException({
-                if(it != null){
+                if (it != null) {
                     shootError(publishSubject, it, requestId)
-                } else {
-                    shootError(publishSubject, Throwable("Some Error"), requestId)
                 }
-            }, ErrorModel::class.java)
+            }, eClass)
             .exception {
                 shootError(publishSubject, it, requestId)
             }
@@ -186,9 +171,9 @@ abstract class SaizadBaseViewModel(
         return publishSubject
     }
 
-    private fun <M> shootError(
+    private fun <M, E : BaseApiError> shootError(
         publishSubject: BehaviorSubject<DataState<M>>,
-        errorModel: ErrorModel,
+        errorModel: E,
         id: Int
     ) {
         val apiErrorException = ApiErrorException(errorModel)
@@ -204,23 +189,6 @@ abstract class SaizadBaseViewModel(
         val value = ErrorData(throwable, id)
         errorSubject.onNext(value)
         publishSubject.onNext(DataState.Error(throwable))
-    }
-
-    private fun <M> routeDataSet(
-        mutableLiveData: MutableLiveData<DataState<M>>,
-        dataState: DataState<M>
-    ) {
-        when (dataState) {
-            is DataState.Loading -> {
-                mutableLiveData.value = dataState
-            }
-            is DataState.Error -> {
-                mutableLiveData.value = dataState
-            }
-            is DataState.ApiError -> {
-                mutableLiveData.postValue(dataState)
-            }
-        }
     }
 
     fun activityResult(requestCode: Int): Observable<ActivityResult<*>> {
@@ -300,6 +268,6 @@ abstract class SaizadBaseViewModel(
 
     class LoadingData(var isLoading: Boolean, id: Int) : LiveDataStatus(id)
 
-    class ApiErrorException(val errorModel: ErrorModel) :
-        Exception(Throwable(errorModel.error.message))
+    class ApiErrorException(val errorModel: BaseApiError) :
+        Exception(Throwable(errorModel.message()))
 }

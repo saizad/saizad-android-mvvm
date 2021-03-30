@@ -12,6 +12,7 @@ import com.saizad.mvvmexample.components.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
 class LoginFragment : AuthFragment<LoginViewModel>() {

@@ -5,13 +5,28 @@ import com.google.gson.annotations.SerializedName;
 import com.sa.easyandroidform.ObjectUtils;
 import com.sa.easyandroidform.StringUtils;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
-public class ErrorModel {
+public class ErrorModel extends BaseApiError {
 
 
     @SerializedName("error")
     public Error error;
+
+    @NotNull
+    @Override
+    public String error() {
+        return error.error;
+    }
+
+    @NotNull
+    @Override
+    public String message() {
+        return error.description;
+    }
+
 
     public static class Error {
         @SerializedName("status")
@@ -34,9 +49,9 @@ public class ErrorModel {
             for (FieldError fieldError : errorModel.error.fields) {
                 fields.append(fieldError.field).append(", ");
             }
-            if(errorModel.error.fields.size() > 1){
+            if (errorModel.error.fields.size() > 1) {
                 return StringUtils.stripTrailingLeadingNewLines(fields.toString()) + " fields are missing";
-            }else {
+            } else {
                 return StringUtils.stripTrailingLeadingNewLines(fields.toString()) + " field is missing";
             }
         }

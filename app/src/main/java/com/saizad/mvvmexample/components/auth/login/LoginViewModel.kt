@@ -8,6 +8,7 @@ import com.saizad.mvvm.model.LoginBody
 import com.saizad.mvvmexample.ApiRequestCodes
 import com.saizad.mvvmexample.components.auth.AuthViewModel
 import com.saizad.mvvmexample.di.auth.AuthEnvironment
+import com.saizad.mvvmexample.models.ApiError
 import com.saizad.mvvmexample.models.LoginResponse
 import com.saizad.mvvmexample.models.ReqResUser
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,9 +34,7 @@ class LoginViewModel @Inject constructor(
     }
 
     fun login(requestId: Int = ApiRequestCodes.LOGIN): Flow<DataState<LoginResponse>> {
-        return liveData(api.login(form.requiredBuild()), requestId, errorResponse = {
-
-        })
+        return flowData(api.login(form.requiredBuild()), requestId)
     }
 
     fun user(user: Int, requestId: Int = ApiRequestCodes.USER): Flow<DataState<DataModel<ReqResUser>>> {

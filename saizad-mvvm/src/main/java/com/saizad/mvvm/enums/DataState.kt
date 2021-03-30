@@ -4,7 +4,7 @@ import com.saizad.mvvm.components.SaizadBaseViewModel
 
 sealed class DataState<out R> {
 
-    data class Success<out T>(val data: T) : DataState<T>()
+    data class Success<out T>(val data: T?) : DataState<T>()
     data class ApiError(val apiErrorException: SaizadBaseViewModel.ApiErrorException) :
         DataState<Nothing>()
 

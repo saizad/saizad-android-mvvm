@@ -27,7 +27,7 @@ class HomeViewModel @Inject constructor(
         delay: Int,
         requestId: Int = DELAYED_RESPONSE
     ): Flow<DataState<DataModel<List<ReqResUser>>>> {
-        return liveData(api.delayedResponse(delay), requestId)
+        return flowData(api.delayedResponse(delay), requestId)
     }
 
     fun logout(): LiveData<Void> {
@@ -39,10 +39,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun resourceNotFound(requestId: Int = RESOURCE_NOT_FOUND): Flow<DataState<Void>> {
-        return liveDataNoResponse(api.resourceNotFound(), requestId)
+        return flowData(api.resourceNotFound(), requestId)
     }
 
     fun delete(requestId: Int = DELETE_USER): Flow<DataState<Void>> {
-        return liveDataNoResponse(api.delete(), requestId)
+        return flowData(api.delete(), requestId)
     }
 }

@@ -227,12 +227,12 @@ fun Disposable.addToDisposable(disposable: CompositeDisposable) {
     disposable.add(this)
 }
 
-fun <R> LiveData<DataState<R>>.stateToData(): LiveData<R>{
+fun <R> Flow<DataState<R>>.stateToData(): Flow<R>{
     return filter { it is DataState.Success<R> }
-        .map { (it as DataState.Success<R>).data }
+        .map { (it as DataState.Success<R>).data!! }
 }
 
-fun <R> Flow<DataState<R>>.stateToData(): Flow<R>{
+fun <R> Flow<DataState<R>>.noContentStateToData(): Flow<R?>{
     return filter { it is DataState.Success<R> }
         .map { (it as DataState.Success<R>).data }
 }
