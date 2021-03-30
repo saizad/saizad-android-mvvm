@@ -15,14 +15,12 @@ import androidx.annotation.DrawableRes
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.map
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.chip.ChipGroup
 import com.jakewharton.rxbinding2.view.RxView
 import com.saizad.mvvm.components.SaizadBaseFragment
 import com.saizad.mvvm.enums.DataState
-import com.shopify.livedataktx.filter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -203,7 +201,7 @@ inline fun <reified T : Activity> Context.startActivity(config: Intent.() -> Uni
     startActivity(componentIntent<T>(config))
 
 inline fun <reified T : Activity> Context.startActivityClear(config: Intent.() -> Unit = {}) =
-    startActivity(componentIntent<T>{
+    startActivity(componentIntent<T> {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         config.invoke(this)
     })
@@ -219,7 +217,7 @@ val Activity.hideKeyboard: Unit
         KeyBoardUtils.hide(this)
     }
 
-fun Disposable.addToComposite(saizadBaseFragment: SaizadBaseFragment<*>){
+fun Disposable.addToComposite(saizadBaseFragment: SaizadBaseFragment<*>) {
     saizadBaseFragment.compositeDisposable().add(this)
 }
 
@@ -227,12 +225,30 @@ fun Disposable.addToDisposable(disposable: CompositeDisposable) {
     disposable.add(this)
 }
 
-fun <R> Flow<DataState<R>>.stateToData(): Flow<R>{
+fun <R> Flow<DataState<R>>.stateToData(): Flow<R> {
     return filter { it is DataState.Success<R> }
         .map { (it as DataState.Success<R>).data!! }
 }
 
-fun <R> Flow<DataState<R>>.noContentStateToData(): Flow<R?>{
+fun <R> Flow<DataState<R>>.noContentStateToData(): Flow<R?> {
     return filter { it is DataState.Success<R> }
         .map { (it as DataState.Success<R>).data }
 }
+
+fun ViewPager2.next(smoothScroll: Boolean = true) {
+    setCurrentItem(currentItem + 1, smoothScroll)
+}
+
+fun ViewPager2.prev(smoothScroll: Boolean = true) {
+    setCurrentItem(currentItem - 1, smoothScroll)
+}
+
+val ViewPager2.isLastPage: Boolean
+    get() {
+        return currentItem == adapter!!.itemCount - 1
+    }
+
+val ViewPager2.isFirstPage: Boolean
+    get() {
+        return currentItem == 0
+    }

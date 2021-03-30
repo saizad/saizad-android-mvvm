@@ -3,8 +3,11 @@ package com.saizad.mvvmexample.components.main.users.userpage
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.navArgs
-import androidx.viewpager2.widget.ViewPager2
 import com.saizad.mvvm.pager.PageListenerImp
+import com.saizad.mvvm.utils.isFirstPage
+import com.saizad.mvvm.utils.next
+import com.saizad.mvvm.utils.prev
+import com.saizad.mvvm.utils.throttleClick
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,15 +29,35 @@ class UserPageHostFragment : MainFragment<UserPageHostViewModel>() {
         super.onViewCreated(view, savedInstanceState)
 
         val userPageAdapter =
-            UserPageAdapter(requireActivity(), args.users.map { UserPageFragment::class.java })
+            UserPageAdapter(requireActivity(), args.users.map {
+                UserPageFragment::class.java
+            }, viewPager)
         viewPager.adapter = userPageAdapter
+        args.user?.let { user ->
+            viewPager.setCurrentItem(args.users.indexOfFirst { it.id == user.id }, false)
+        }
         viewPager.setPageTransformer(ZoomOutPageTransformer())
 
-        viewPager
-        userPageAdapter.setPageListener(object : PageListenerImp<UserPageFragment>(){
+        userPageAdapter.setPageListener(object : PageListenerImp<UserPageFragment>() {
             override fun onPageLoaded(page: UserPageFragment, position: Int) {
                 page.viewModel().setUser(args.users[position])
             }
+
+            override fun onPageReady(page: UserPageFragment) {
+                page.pageOnScreen()
+            }
         })
+
+        nextButton.throttleClick {
+            viewPager.next(false)
+        }
+    }
+
+    override fun onBackPressed(): Boolean {
+        if(viewPager.isFirstPage) {
+            return super.onBackPressed()
+        }
+        viewPager.prev()
+        return true
     }
 }

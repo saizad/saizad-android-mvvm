@@ -87,7 +87,7 @@ class HomeFragment : MainFragment<HomeViewModel>() {
 
         users.throttleClick {
             lifecycleScopeOnMain {
-                viewModel().delayed(5, LONG_DELAYED_RESPONSE)
+                viewModel().delayed(2, LONG_DELAYED_RESPONSE)
                     .stateToData()
                     .collect {
                         showShortToast(it.data.size)

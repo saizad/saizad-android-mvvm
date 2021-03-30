@@ -14,7 +14,6 @@ import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.enums.DataState
 import com.saizad.mvvm.model.BaseApiError
 import com.saizad.mvvm.model.ErrorModel
-import com.saizad.mvvm.model.IntPageDataModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -24,9 +23,7 @@ import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import retrofit2.Response
 import sa.zad.easyretrofit.observables.NeverErrorObservable
-import sa.zad.pagedrecyclerlist.ConstraintLayoutList
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -50,12 +47,12 @@ abstract class SaizadBaseViewModel(
     val errorSubject = PublishSubject.create<ErrorData>()
     val apiErrorSubject = PublishSubject.create<ApiErrorData>()
 
-    fun <T : BaseNotificationModel?> notificationListener(notificationType: Array<String>?): LiveData<T> {
+    fun <T : BaseNotificationModel> notificationListener(notificationType: Array<String>): LiveData<T> {
         val notificationModelMutableLiveData = MutableLiveData<T>()
         disposable.add(
             notification
                 .filter {
-                    ArrayUtils.contains(notificationType, it.type)
+                    notificationType.contains(it.type)
                 }
                 .filter { !it.isRead }
                 .observeOn(AndroidSchedulers.mainThread())
@@ -69,26 +66,9 @@ abstract class SaizadBaseViewModel(
         return notificationModelMutableLiveData
     }
 
-    fun <T : BaseNotificationModel?> notificationListener(notificationType: String): LiveData<T> {
+    fun <T : BaseNotificationModel> notificationListener(notificationType: String): LiveData<T> {
         val types = arrayOf(notificationType)
         return notificationListener(types)
-    }
-
-    protected fun <M> pagedLiveData(
-        observable: NeverErrorObservable<IntPageDataModel<M>>,
-        callback: ConstraintLayoutList.CallBack<IntPageDataModel<M>>,
-        errorCallback: Throwable.() -> Unit = {},
-        requestId: Int
-    ): LiveData<DataState<IntPageDataModel<M>>> {
-        val mutableLiveData = MutableLiveData<DataState<IntPageDataModel<M>>>()
-        request(observable, requestId)
-            .doOnError { errorCallback.invoke(it) }
-            .subscribe {
-                if (it is DataState.Success<IntPageDataModel<M>>) {
-                    callback.call(it.data)
-                }
-            }
-        return mutableLiveData
     }
 
     fun <M> liveData(
@@ -105,7 +85,7 @@ abstract class SaizadBaseViewModel(
     ): Flow<DataState<M>> {
 
         val block: suspend ProducerScope<DataState<M>>.() -> Unit = {
-            val disposable = baseRequest(observable, requestId, eClass)
+            val request = baseRequest(observable, requestId, eClass)
                 .subscribe {
                     when (it) {
                         is DataState.Success -> {
@@ -126,8 +106,10 @@ abstract class SaizadBaseViewModel(
                     }
                 }
 
+            disposable.add(request)
+
             awaitClose {
-                disposable.dispose()
+                request.dispose()
             }
         }
         return callbackFlow(block)

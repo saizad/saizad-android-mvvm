@@ -13,6 +13,7 @@ abstract class BasePage<VM : SaizadBaseViewModel> : SaizadBaseFragment<VM>(),
     PagerAdapterListener, BasePagerAdapterContract {
 
     private var pageLoaded = BehaviorSubject.create<Boolean>()
+    var pageIndex : Int = -1
 
     @CallSuper
     override fun onViewCreated(view: View, savedInstanceState: Bundle?, recycled: Boolean) {
