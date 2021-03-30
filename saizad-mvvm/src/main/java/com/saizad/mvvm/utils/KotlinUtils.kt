@@ -27,6 +27,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 import org.joda.time.DateTime
 import org.joda.time.Period
 import org.joda.time.format.PeriodFormatterBuilder
@@ -225,6 +228,11 @@ fun Disposable.addToDisposable(disposable: CompositeDisposable) {
 }
 
 fun <R> LiveData<DataState<R>>.stateToData(): LiveData<R>{
+    return filter { it is DataState.Success<R> }
+        .map { (it as DataState.Success<R>).data }
+}
+
+fun <R> Flow<DataState<R>>.stateToData(): Flow<R>{
     return filter { it is DataState.Success<R> }
         .map { (it as DataState.Success<R>).data }
 }

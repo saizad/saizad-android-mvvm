@@ -12,7 +12,6 @@ import com.saizad.mvvm.BaseNotificationModel
 import com.saizad.mvvm.Environment
 import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.enums.DataState
-import com.saizad.mvvm.model.DataModel
 import com.saizad.mvvm.model.ErrorModel
 import com.saizad.mvvm.model.IntPageDataModel
 import io.reactivex.Observable
@@ -20,6 +19,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import kotlinx.coroutines.channels.ProducerScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Response
 import sa.zad.easyretrofit.observables.NeverErrorObservable
 import sa.zad.pagedrecyclerlist.ConstraintLayoutList
@@ -88,75 +91,66 @@ abstract class SaizadBaseViewModel(
     }
 
     fun liveDataNoResponse(
-        observable: NeverErrorObservable<Void>, requestId: Int
-    ): LiveData<DataState<Void?>> {
-        val mutableLiveData = MutableLiveData<DataState<Void?>>()
-        request(observable, requestId)
-            .subscribe {
-                if (it is DataState.Success) {
-                    mutableLiveData.postValue(it)
-                } else {
-                    routeDataSet(mutableLiveData, it)
-                }
-            }
-        return mutableLiveData
-    }
-
-    open fun <M> liveDataRequestNoEnvelope(
-        observable: NeverErrorObservable<M>,
+        observable: NeverErrorObservable<Void>,
         requestId: Int,
-        errorResponse: Response<M>.() -> Unit = {}
-    ): LiveData<DataState<M>> {
-        val mutableLiveData = MutableLiveData<DataState<M>>()
-        apiRequestNoEnvelope(observable, requestId, errorResponse)
-            .subscribe {
-                mutableLiveData.setValue(it)
-            }
-        return mutableLiveData
+        successResponse: () -> Unit = {},
+        errorResponse: Response<Void>.() -> Unit = {},
+    ): Flow<DataState<Void>> {
+        return flowData(observable, requestId, {
+            successResponse.invoke()
+            true
+        }, errorResponse)
     }
 
     fun <M> liveData(
-        observable: NeverErrorObservable<DataModel<M>>,
-        requestId: Int
-    ): LiveData<DataState<M>> {
-        val mutableLiveData = MutableLiveData<DataState<M>>()
-        apiRequest(observable, requestId)
-            .subscribe {
-                when (it) {
-                    is DataState.Success<DataModel<M>> -> {
-                        mutableLiveData.value = DataState.Success(it.data.data)
-                    }
-                    is DataState.Loading -> {
-                        mutableLiveData.postValue(it)
-                    }
-                    is DataState.Error -> {
-                        mutableLiveData.postValue(it)
-                    }
-                    is DataState.ApiError -> {
-                        mutableLiveData.postValue(it)
+        observable: NeverErrorObservable<M>,
+        requestId: Int,
+        response: Response<M>.() -> Boolean = { false },
+        errorResponse: Response<M>.() -> Unit = {},
+    ): Flow<DataState<M>> {
+        return flowData(observable, requestId, response, errorResponse)
+    }
+
+    open fun <M> flowData(
+        observable: NeverErrorObservable<M>,
+        requestId: Int,
+        response: Response<M>.() -> Boolean = { false },
+        errorResponse: Response<M>.() -> Unit = {},
+    ): Flow<DataState<M>> {
+
+        val block: suspend ProducerScope<DataState<M>>.() -> Unit = {
+            val disposable = request(observable, requestId, response, errorResponse)
+                .subscribe {
+                    when (it) {
+                        is DataState.Success<M> -> {
+                            offer(it)
+                        }
+                        is DataState.Loading -> {
+                            offer(it)
+                            if (!it.isLoading) {
+                                close()
+                            }
+                        }
+                        is DataState.Error -> {
+                            offer(it)
+                        }
+                        is DataState.ApiError -> {
+                            offer(it)
+                        }
                     }
                 }
+
+            awaitClose {
+                disposable.dispose()
             }
-        return mutableLiveData
-    }
-
-    fun <M> apiRequest(
-        observable: NeverErrorObservable<DataModel<M>>, requestId: Int
-    ): Observable<DataState<DataModel<M>>> {
-        return request(observable, requestId)
-    }
-
-    fun <M> apiRequestNoEnvelope(
-        observable: NeverErrorObservable<M>, requestId: Int,
-        errorResponse: Response<M>.() -> Unit = {}
-    ): Observable<DataState<M>> {
-        return request(observable, requestId, errorResponse = errorResponse)
+        }
+        return callbackFlow(block)
     }
 
     fun <M> request(
         observable: NeverErrorObservable<M>,
         requestId: Int,
-        response: Response<M>.() -> Unit = {},
+        response: Response<M>.() -> Boolean = { false },
         errorResponse: Response<M>.() -> Unit = {}
     ): Observable<DataState<M>> {
         val publishSubject = BehaviorSubject.create<DataState<M>>()
@@ -165,8 +159,9 @@ abstract class SaizadBaseViewModel(
         publishSubject.onNext(DataState.Loading(true))
         observable
             .successResponse {
-                response.invoke(it)
-                publishSubject.onNext(DataState.Success(it.body()!!))
+                if (!response.invoke(it)) {
+                    publishSubject.onNext(DataState.Success(it.body()!!))
+                }
             }
             .timeoutException { shootError(publishSubject, it, requestId) }
             .connectionException { shootError(publishSubject, it, requestId) }
@@ -174,8 +169,10 @@ abstract class SaizadBaseViewModel(
                 errorResponse.invoke(it)
             }
             .apiException({
-                it?.let {
+                if(it != null){
                     shootError(publishSubject, it, requestId)
+                } else {
+                    shootError(publishSubject, Throwable("Some Error"), requestId)
                 }
             }, ErrorModel::class.java)
             .exception {

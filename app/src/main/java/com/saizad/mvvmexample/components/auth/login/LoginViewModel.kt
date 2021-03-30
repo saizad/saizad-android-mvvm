@@ -1,23 +1,17 @@
 package com.saizad.mvvmexample.components.auth.login
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.saizad.mvvm.enums.DataState
+import com.saizad.mvvm.model.DataModel
 import com.saizad.mvvm.model.LoginBody
 import com.saizad.mvvmexample.ApiRequestCodes
 import com.saizad.mvvmexample.components.auth.AuthViewModel
 import com.saizad.mvvmexample.di.auth.AuthEnvironment
-import com.saizad.mvvmexample.models.ApiError
 import com.saizad.mvvmexample.models.LoginResponse
 import com.saizad.mvvmexample.models.ReqResUser
-import com.shopify.livedataktx.SingleLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -38,11 +32,13 @@ class LoginViewModel @Inject constructor(
         loginFormLiveData.postValue(form)
     }
 
-    fun login(requestId: Int = ApiRequestCodes.LOGIN): LiveData<DataState<LoginResponse>> {
-        return mVVMExampleRequest(api.login(form.requiredBuild()), requestId)
+    fun login(requestId: Int = ApiRequestCodes.LOGIN): Flow<DataState<LoginResponse>> {
+        return liveData(api.login(form.requiredBuild()), requestId, errorResponse = {
+
+        })
     }
 
-    fun user(user: Int, requestId: Int = ApiRequestCodes.USER): LiveData<DataState<ReqResUser>> {
+    fun user(user: Int, requestId: Int = ApiRequestCodes.USER): Flow<DataState<DataModel<ReqResUser>>> {
         return liveData(api.user(user), requestId)
     }
 }

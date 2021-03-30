@@ -8,4 +8,5 @@ object ApiRequestCodes {
     const val SHORT_DELAYED_RESPONSE = 5
     const val LONG_DELAYED_RESPONSE = 6
     const val RESOURCE_NOT_FOUND = 7
+    const val DELETE_USER = 8
 }

@@ -5,12 +5,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.saizad.mvvm.enums.DataState
+import com.saizad.mvvm.model.DataModel
 import com.saizad.mvvmexample.ApiRequestCodes.DELAYED_RESPONSE
+import com.saizad.mvvmexample.ApiRequestCodes.DELETE_USER
 import com.saizad.mvvmexample.ApiRequestCodes.RESOURCE_NOT_FOUND
 import com.saizad.mvvmexample.components.main.MainViewModel
 import com.saizad.mvvmexample.di.main.MainEnvironment
 import com.saizad.mvvmexample.models.ReqResUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,7 +26,7 @@ class HomeViewModel @Inject constructor(
     fun delayed(
         delay: Int,
         requestId: Int = DELAYED_RESPONSE
-    ): LiveData<DataState<List<ReqResUser>>> {
+    ): Flow<DataState<DataModel<List<ReqResUser>>>> {
         return liveData(api.delayedResponse(delay), requestId)
     }
 
@@ -35,7 +38,11 @@ class HomeViewModel @Inject constructor(
         return mutableLiveData
     }
 
-    fun resourceNotFound(requestId: Int = RESOURCE_NOT_FOUND): LiveData<DataState<Void?>> {
+    fun resourceNotFound(requestId: Int = RESOURCE_NOT_FOUND): Flow<DataState<Void>> {
         return liveDataNoResponse(api.resourceNotFound(), requestId)
+    }
+
+    fun delete(requestId: Int = DELETE_USER): Flow<DataState<Void>> {
+        return liveDataNoResponse(api.delete(), requestId)
     }
 }

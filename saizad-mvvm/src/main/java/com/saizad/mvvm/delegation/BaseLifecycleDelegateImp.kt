@@ -13,7 +13,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
-import com.saizad.mvvm.LoadingDialog
 import com.saizad.mvvm.SaizadLocation.GPSOffException
 import com.saizad.mvvm.components.SaizadBaseViewModel
 import com.saizad.mvvm.components.SaizadBaseViewModel.*

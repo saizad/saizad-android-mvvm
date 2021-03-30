@@ -5,15 +5,13 @@ import android.text.method.PasswordTransformationMethod
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.saizad.mvvm.utils.lifecycleScopeOnMainWithDelay
-import com.saizad.mvvm.utils.startActivityClear
-import com.saizad.mvvm.utils.stateToData
-import com.saizad.mvvm.utils.throttleClick
+import com.saizad.mvvm.utils.*
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.auth.AuthFragment
 import com.saizad.mvvmexample.components.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class LoginFragment : AuthFragment<LoginViewModel>() {
@@ -24,15 +22,18 @@ class LoginFragment : AuthFragment<LoginViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?, recycled: Boolean) {
 
         logout.throttleClick {
-            viewModel().login()
-                .observe(viewLifecycleOwner, Observer {
-                    viewModel().user((1..10).random())
-                        .stateToData()
-                        .observe(viewLifecycleOwner, Observer {
-                            currentUserType.refresh(it)
-                            context().startActivityClear<MainActivity>()
-                        })
-                })
+            lifecycleScopeOnMain {
+                viewModel().login()
+                    .stateToData()
+                    .collect {
+                        viewModel().user((1..10).random())
+                            .stateToData()
+                            .collect {
+                                currentUserType.refresh(it.data)
+                                context().startActivityClear<MainActivity>()
+                            }
+                    }
+            }
         }
 
         lifecycleScopeOnMainWithDelay(1000) {
