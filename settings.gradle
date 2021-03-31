@@ -5,8 +5,8 @@ include ':saizad-mvvm'
 //include ':paged-list'
 //project(':paged-list').projectDir = new File('../PagedRecyclerList/pagedrecyclerlist')
 
-//include ':easyandroidform'
-//project(':easyandroidform').projectDir = new File('../EasyAndroidForm/easyandroidform')
+include ':easyandroidform'
+project(':easyandroidform').projectDir = new File('../EasyAndroidForm/easyandroidform')
 
 //include ':form-test'
 //project(':form-test').projectDir = new File('../EasyAndroidFormTest/form-test')

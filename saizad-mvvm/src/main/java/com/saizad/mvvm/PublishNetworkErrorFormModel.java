@@ -2,7 +2,7 @@ package com.saizad.mvvm;
 
 import com.sa.easyandroidform.fields.BaseField;
 import com.sa.easyandroidform.form.FormModel;
-import com.saizad.mvvm.model.ErrorModel;
+import com.saizad.mvvm.model.FieldError;
 import com.saizad.mvvm.utils.Utils;
 
 import java.util.ArrayList;
@@ -17,11 +17,11 @@ public abstract class PublishNetworkErrorFormModel<T> extends FormModel<T> {
         this.fields = fields;
     }
 
-    public void publishNetworkError(List<ErrorModel.FieldError> errors){
+    public void publishNetworkError(List<FieldError> errors){
         for (BaseField field : fields) {
-            final ErrorModel.FieldError error = Utils.compareFindItem(errors, fieldError -> fieldError.field.equalsIgnoreCase(field.getFieldId()));
+            final FieldError error = Utils.compareFindItem(errors, fieldError -> fieldError.getField().equalsIgnoreCase(field.getFieldId()));
             if(error != null){
-                field.networkErrorPublish(error.message.get(0));
+                field.networkErrorPublish(error.getMessage().get(0));
             }
         }
     }

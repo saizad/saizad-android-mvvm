@@ -29,8 +29,7 @@ abstract class FilesFieldView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0
-) :
-    BaseFieldView<List<String>>(context, attrs, defStyleAttr) {
+) : BaseFieldView<List<String>>(context, attrs, defStyleAttr) {
 
     private lateinit var parentFragment: Fragment
     private lateinit var baseViewModel: SaizadBaseViewModel

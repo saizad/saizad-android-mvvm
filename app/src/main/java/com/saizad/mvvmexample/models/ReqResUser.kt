@@ -54,8 +54,8 @@ data class ReqResUser(
         override fun buildForm(): ReqResUser {
             return ReqResUser(
                 reqResUser.id,
-                fullNameField.firstName!!,
-                fullNameField.lastName!!,
+                fullNameField.firstName()!!,
+                fullNameField.lastName()!!,
                 reqResUser.email,
                 reqResUser.avatar,
                 jobField.requiredField()
