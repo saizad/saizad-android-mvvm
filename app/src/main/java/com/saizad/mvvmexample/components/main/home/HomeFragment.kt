@@ -9,8 +9,9 @@ import com.saizad.mvvm.utils.lifecycleScopeOnMain
 import com.saizad.mvvm.utils.noContentStateToData
 import com.saizad.mvvm.utils.stateToData
 import com.saizad.mvvm.utils.throttleClick
+import com.saizad.mvvmexample.ApiRequestCodes.DEFAULT_ERROR
 import com.saizad.mvvmexample.ApiRequestCodes.DELAYED_RESPONSE
-import com.saizad.mvvmexample.ApiRequestCodes.LONG_DELAYED_RESPONSE
+import com.saizad.mvvmexample.ApiRequestCodes.RANDOM_REQUEST
 import com.saizad.mvvmexample.ApiRequestCodes.SHORT_DELAYED_RESPONSE
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainFragment
@@ -35,48 +36,70 @@ class HomeFragment : MainFragment<HomeViewModel>() {
             viewModel().logout()
         }
 
-        lifecycleScopeOnMain {
-            viewModel().delete()
-                .noContentStateToData()
-                .collect {
-                    showShortToast("Deleted")
-                }
-        }
-
-
-        lifecycleScopeOnMain {
-            viewModel().resourceNotFound()
-                .collect {
-                    if (it is DataState.ApiError) {
-                        showShortToast(it.apiErrorException.errorModel.message())
+        noContentRequest.throttleClick {
+            lifecycleScopeOnMain {
+                viewModel().noContentResponse()
+                    .noContentStateToData()
+                    .collect {
+                        showShortToast("No Content")
                     }
-                }
+            }
         }
 
-        lifecycleScopeOnMain {
-            viewModel().delayed(5, DELAYED_RESPONSE)
-                .collect {
-                    when (it) {
-                        is DataState.Success -> {
-                            showShortToast(it.data!!.data.size)
+        resNotFoundErrorResponse.throttleClick {
+            lifecycleScopeOnMain {
+                viewModel().resourceNotFound()
+                    .collect {
+                        if (it is DataState.ApiError) {
+                            showShortToast(it.apiErrorException.errorModel.message())
                         }
-                        is DataState.Loading -> {
-                            if (it.isLoading) {
-                                showShortToast("Loading....")
-                            } else {
-                                showShortToast("Loading Completed!!")
+                    }
+            }
+        }
+
+        multiRequests.throttleClick {
+            lifecycleScopeOnMain {
+                viewModel().delayed(5, DELAYED_RESPONSE)
+                    .collect {
+                        when (it) {
+                            is DataState.Success -> {
+                                showShortToast(it.data!!.data.size)
+                            }
+                            is DataState.Loading -> {
+                                if (it.isLoading) {
+                                    showShortToast("Loading....")
+                                } else {
+                                    showShortToast("Loading Completed!!")
+                                }
                             }
                         }
                     }
-                }
+            }
+
+            lifecycleScopeOnMain {
+                viewModel().delayed(6, SHORT_DELAYED_RESPONSE)
+                    .stateToData()
+                    .collect {
+                        showShortToast(it.data.size)
+                    }
+            }
         }
 
-        lifecycleScopeOnMain {
-            viewModel().delayed(6, SHORT_DELAYED_RESPONSE)
-                .stateToData()
-                .collect {
-                    showShortToast(it.data.size)
-                }
+        requestNoLoading.throttleClick {
+            lifecycleScopeOnMain {
+                viewModel().delayed(1, RANDOM_REQUEST)
+                    .stateToData()
+                    .collect {
+                        showShortToast(it.data.size)
+                    }
+            }
+        }
+
+        defaultError.throttleClick {
+            lifecycleScopeOnMain {
+                viewModel().resourceNotFound(DEFAULT_ERROR)
+                    .collect {}
+            }
         }
 
 
@@ -86,14 +109,6 @@ class HomeFragment : MainFragment<HomeViewModel>() {
             })
 
         users.throttleClick {
-            lifecycleScopeOnMain {
-                viewModel().delayed(8, LONG_DELAYED_RESPONSE)
-                    .stateToData()
-                    .collect {
-                        showShortToast(it.data.size)
-                    }
-            }
-
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToUsersFragment())
         }
 

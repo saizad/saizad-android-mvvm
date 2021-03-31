@@ -9,4 +9,6 @@ object ApiRequestCodes {
     const val LONG_DELAYED_RESPONSE = 6
     const val RESOURCE_NOT_FOUND = 7
     const val DELETE_USER = 8
+    const val RANDOM_REQUEST = 9
+    const val DEFAULT_ERROR = 10
 }

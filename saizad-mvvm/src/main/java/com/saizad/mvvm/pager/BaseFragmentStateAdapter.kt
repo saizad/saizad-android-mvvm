@@ -1,6 +1,5 @@
 package com.saizad.mvvm.pager
 
-import android.util.Log
 import android.util.SparseArray
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -9,7 +8,6 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.saizad.mvvm.utils.Utils
 import io.reactivex.android.schedulers.AndroidSchedulers
-import java.util.concurrent.TimeUnit
 
 open class BaseFragmentStateAdapter<F : BasePage<*>>(
     fm: FragmentActivity,
@@ -65,7 +63,6 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
                 pageListener?.onPageLoaded(createInstance, position)
             }
             .filter { selected == position }
-//            .delay(100, TimeUnit.MILLISECONDS)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 cb(position)

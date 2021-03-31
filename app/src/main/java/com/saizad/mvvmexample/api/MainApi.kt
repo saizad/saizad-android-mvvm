@@ -20,5 +20,5 @@ interface MainApi {
     fun resourceNotFound(): NeverErrorObservable<Void>
 
     @DELETE("/api/users/2")
-    fun delete(): NeverErrorObservable<Void>
+    fun noContentResponse(): NeverErrorObservable<Void>
 }

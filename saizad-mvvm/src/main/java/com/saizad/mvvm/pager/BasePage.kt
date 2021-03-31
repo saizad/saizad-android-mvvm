@@ -39,16 +39,4 @@ abstract class BasePage<VM : SaizadBaseViewModel> : SaizadBaseFragment<VM>(),
     override fun pageLoaded(): Observable<Boolean> {
         return pageLoaded
     }
-
-    override fun onPageShowing(visiblePercent: Int) {
-        log("xxxOnPageShowing $visiblePercent")
-    }
-
-    override fun onPageHiding(visiblePercent: Int) {
-        log("xxxOnPageHiding $visiblePercent")
-    }
-
-    override fun onPageResetting(visiblePercent: Int) {
-        log("xxxOnPageResetting $visiblePercent")
-    }
 }
