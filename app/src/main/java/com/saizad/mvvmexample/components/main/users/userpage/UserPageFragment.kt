@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.saizad.mvvm.utils.isFirstPage
+import com.saizad.mvvm.utils.lifecycleScopeOnMainWithDelay
 import com.saizad.mvvm.utils.prev
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainPageFragment
@@ -16,6 +17,7 @@ import kotlinx.android.synthetic.main.fragment_user_page_host.*
 
 @AndroidEntryPoint
 class UserPageFragment : MainPageFragment<UserPageViewModel>() {
+
 
     override val viewModelClassType: Class<UserPageViewModel>
         get() = UserPageViewModel::class.java
@@ -37,8 +39,8 @@ class UserPageFragment : MainPageFragment<UserPageViewModel>() {
     }
 
     fun pageOnScreen(){
-        lifecycleScope.launchWhenStarted {
-            showShortToast("pageOnScreen $pageIndex")
-        }
+        log("pageOnScreen $pageIndex ${lifecycle.currentState}")
+        showShortToast("pageOnScreen $pageIndex")
     }
+
 }

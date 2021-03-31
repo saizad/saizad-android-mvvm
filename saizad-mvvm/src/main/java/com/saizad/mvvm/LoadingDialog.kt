@@ -17,8 +17,7 @@ class LoadingDialog (context: Context) : Dialog(context) {
             requestCounter -= 1
             requestCounter = requestCounter.coerceAtLeast(0)
         }
-
-        if (show && requestCounter == 1) {
+        if (show && (!isShowing || requestCounter == 1)) {
             show()
         } else if (!show && requestCounter == 0) {
             super.dismiss()
@@ -27,11 +26,6 @@ class LoadingDialog (context: Context) : Dialog(context) {
         }
 
         count.isVisible = requestCounter > 1
-    }
-
-    override fun dismiss() {
-        requestCounter = 0
-        super.dismiss()
     }
 
     init {

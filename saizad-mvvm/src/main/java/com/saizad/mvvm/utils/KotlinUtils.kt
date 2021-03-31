@@ -116,14 +116,14 @@ public fun SaizadBaseFragment<*>.lifecycleScopeOnMain(
 }
 
 public fun LifecycleOwner.lifecycleScopeOnMain(block: suspend CoroutineScope.() -> Unit): Job {
-    return lifecycleScope.launch(Dispatchers.Main, block = block)
+    return lifecycleScope.launchWhenStarted(block = block)
 }
 
 public fun LifecycleOwner.lifecycleScopeOnMainWithDelay(
     timeMillis: Long,
     block: suspend CoroutineScope.() -> Unit
 ): Job {
-    return lifecycleScope.launch(Dispatchers.Main) {
+    return lifecycleScope.launchWhenStarted {
         delay(timeMillis)
         block.invoke(this)
     }

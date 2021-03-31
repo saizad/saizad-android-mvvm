@@ -47,14 +47,14 @@ class HomeFragment : MainFragment<HomeViewModel>() {
         lifecycleScopeOnMain {
             viewModel().resourceNotFound()
                 .collect {
-                    if (it is DataState.Error) {
-                        showShortToast(it.throwable.message.toString())
+                    if (it is DataState.ApiError) {
+                        showShortToast(it.apiErrorException.errorModel.message())
                     }
                 }
         }
 
         lifecycleScopeOnMain {
-            viewModel().delayed(1, DELAYED_RESPONSE)
+            viewModel().delayed(5, DELAYED_RESPONSE)
                 .collect {
                     when (it) {
                         is DataState.Success -> {
@@ -72,7 +72,7 @@ class HomeFragment : MainFragment<HomeViewModel>() {
         }
 
         lifecycleScopeOnMain {
-            viewModel().delayed(2, SHORT_DELAYED_RESPONSE)
+            viewModel().delayed(6, SHORT_DELAYED_RESPONSE)
                 .stateToData()
                 .collect {
                     showShortToast(it.data.size)
@@ -87,7 +87,7 @@ class HomeFragment : MainFragment<HomeViewModel>() {
 
         users.throttleClick {
             lifecycleScopeOnMain {
-                viewModel().delayed(2, LONG_DELAYED_RESPONSE)
+                viewModel().delayed(8, LONG_DELAYED_RESPONSE)
                     .stateToData()
                     .collect {
                         showShortToast(it.data.size)

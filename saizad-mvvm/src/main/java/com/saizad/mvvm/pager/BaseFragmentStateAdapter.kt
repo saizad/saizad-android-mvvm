@@ -1,11 +1,15 @@
 package com.saizad.mvvm.pager
 
+import android.util.Log
 import android.util.SparseArray
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.saizad.mvvm.utils.Utils
+import io.reactivex.android.schedulers.AndroidSchedulers
+import java.util.concurrent.TimeUnit
 
 open class BaseFragmentStateAdapter<F : BasePage<*>>(
     fm: FragmentActivity,
@@ -21,23 +25,30 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
     init {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                selected = position
-                cb(position)
+                selected = if (cb(position)) {
+                    -1
+                } else {
+                    position
+                }
             }
         })
     }
 
-    private fun cb(position: Int){
+    private fun cb(position: Int): Boolean {
         fragments.get(position)?.let {
             it.onPageSelected()
             if (currentFragment != it) {
                 currentFragment?.onPageUnSelected()
-                pageListener?.onPageReady(it)
-            }else if(currentFragment == null) {
-                pageListener?.onPageReady(it)
+                if (it.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    pageListener?.onPageReady(it)
+                } else {
+                    return false
+                }
             }
             currentFragment = it
+            return true
         }
+        return false
     }
 
 
@@ -48,14 +59,17 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
     override fun createFragment(position: Int): Fragment {
         val createInstance = Utils.createInstance(items[position])!!
         createInstance.pageIndex = position
-        createInstance.pageLoaded()
-            .subscribe {
-                pageListener?.onPageLoaded(createInstance, position)
-                if(selected == position){
-                    cb(position)
-                }
-            }
         fragments.put(position, createInstance)
+        createInstance.pageLoaded()
+            .doOnNext {
+                pageListener?.onPageLoaded(createInstance, position)
+            }
+            .filter { selected == position }
+//            .delay(100, TimeUnit.MILLISECONDS)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                cb(position)
+            }
         return createInstance
     }
 

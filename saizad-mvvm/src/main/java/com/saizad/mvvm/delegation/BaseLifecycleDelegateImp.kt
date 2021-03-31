@@ -62,7 +62,7 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
         val handle =
             baseLifecycleCallBack.serverError(errorData.throwable, errorData.id)
         if (!handle) {
-            showAlertDialogOk("Error", errorData.throwable.message!!)
+            showAlertDialogOk("Error ${errorData.id}", errorData.throwable.message!!)
         }
     }
 
@@ -72,7 +72,7 @@ abstract class BaseLifecycleDelegateImp<V : SaizadBaseViewModel, CB : BaseCB<V>>
             apiErrorData.apiErrorException, apiErrorData.id
         )
         if (!handel) {
-            showAlertDialogOk(error.error(), error.message())
+            showAlertDialogOk("${error.error()} ${apiErrorData.id}", error.message())
         }
     }
 

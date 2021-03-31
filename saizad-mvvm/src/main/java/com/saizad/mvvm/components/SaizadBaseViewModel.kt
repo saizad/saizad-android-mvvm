@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.google.android.gms.common.util.ArrayUtils
 import com.sa.easyandroidform.ObjectUtils
 import com.saizad.mvvm.ActivityResult
 import com.saizad.mvvm.BaseNotificationModel
@@ -115,13 +114,6 @@ abstract class SaizadBaseViewModel(
         return callbackFlow(block)
     }
 
-    fun <M> request(
-        observable: NeverErrorObservable<M>,
-        requestId: Int
-    ): Observable<DataState<M>> {
-        return baseRequest(observable, requestId, ErrorModel::class.java)
-    }
-
     fun <M, E : BaseApiError> baseRequest(
         observable: NeverErrorObservable<M>,
         requestId: Int,
@@ -129,7 +121,7 @@ abstract class SaizadBaseViewModel(
     ): Observable<DataState<M>> {
         val publishSubject = BehaviorSubject.create<DataState<M>>()
         val loadingData = LoadingData(true, requestId)
-        loadingSubject.onNext(loadingData)
+        showLoading(loadingData)
         publishSubject.onNext(DataState.Loading(true))
         observable
             .successResponse {
@@ -147,31 +139,43 @@ abstract class SaizadBaseViewModel(
             }
             .doFinally {
                 loadingData.isLoading = false
-                loadingSubject.onNext(loadingData)
+                showLoading(loadingData)
                 publishSubject.onNext(DataState.Loading(false))
             }.subscribe()
         return publishSubject
     }
 
-    private fun <M, E : BaseApiError> shootError(
+    open fun showLoading(loadingData: LoadingData){
+        loadingSubject.onNext(loadingData)
+    }
+
+    private fun <M> shootError(
         publishSubject: BehaviorSubject<DataState<M>>,
-        errorModel: E,
+        errorModel: BaseApiError,
         id: Int
     ) {
         val apiErrorException = ApiErrorException(errorModel)
-        val value = ApiErrorData(apiErrorException, id)
-        apiErrorSubject.onNext(value)
+        showError(ApiErrorData(apiErrorException, id))
         publishSubject.onNext(DataState.ApiError(apiErrorException))
+    }
+
+    open fun showError(apiErrorData: ApiErrorData){
+        apiErrorSubject.onNext(apiErrorData)
     }
 
     private fun <M> shootError(
         publishSubject: BehaviorSubject<DataState<M>>,
         throwable: Throwable, id: Int
     ) {
-        val value = ErrorData(throwable, id)
-        errorSubject.onNext(value)
+        val errorData = ErrorData(throwable, id)
+        errorSubject.onNext(errorData)
         publishSubject.onNext(DataState.Error(throwable))
     }
+
+    open fun showError(errorData: ErrorData){
+        errorSubject.onNext(errorData)
+    }
+
 
     fun activityResult(requestCode: Int): Observable<ActivityResult<*>> {
         return activityResult
@@ -238,8 +242,8 @@ abstract class SaizadBaseViewModel(
     }
 
     abstract class LiveDataStatus(var id: Int) {
-        fun isThisRequest(id: Int): Boolean {
-            return this.id == id
+        open fun isThisRequest(vararg ids: Int): Boolean {
+            return ids.contains(id)
         }
     }
 
