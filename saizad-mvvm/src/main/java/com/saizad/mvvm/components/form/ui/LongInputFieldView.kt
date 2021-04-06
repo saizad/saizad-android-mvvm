@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.sa.easyandroidform.ObjectUtils
 
-class LongInputFieldView @JvmOverloads constructor(
+open class LongInputFieldView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

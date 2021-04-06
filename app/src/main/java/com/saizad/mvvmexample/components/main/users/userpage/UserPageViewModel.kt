@@ -11,9 +11,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserPageViewModel @Inject constructor(
-    mainEnvironment: MainEnvironment,
-    savedStateHandle: SavedStateHandle
-) : MainPageViewModel(mainEnvironment, savedStateHandle){
+    mainEnvironment: MainEnvironment
+) : MainPageViewModel(mainEnvironment){
 
     private lateinit var user: ReqResUser
 

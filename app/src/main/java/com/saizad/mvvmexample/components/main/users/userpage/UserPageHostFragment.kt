@@ -32,6 +32,7 @@ class UserPageHostFragment : MainFragment<UserPageHostViewModel>() {
             UserPageAdapter(requireActivity(), args.users.map {
                 UserPageFragment::class.java
             }, viewPager)
+        viewPager.offscreenPageLimit = 3
         viewPager.adapter = userPageAdapter
         args.user?.let { user ->
             viewPager.setCurrentItem(args.users.indexOfFirst { it.id == user.id }, false)

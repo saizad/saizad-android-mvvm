@@ -17,7 +17,7 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
 
     private var pageListener: PageListener<F>? = null
     private val fragments = SparseArray<F>()
-    private var currentFragment: F? = null
+    var currentPage: F? = null
     private var selected = -1
 
     init {
@@ -35,15 +35,15 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
     private fun cb(position: Int): Boolean {
         fragments.get(position)?.let {
             it.onPageSelected()
-            if (currentFragment != it) {
-                currentFragment?.onPageUnSelected()
+            if (currentPage != it) {
+                currentPage?.onPageUnSelected()
                 if (it.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     pageListener?.onPageReady(it)
                 } else {
                     return false
                 }
             }
-            currentFragment = it
+            currentPage = it
             return true
         }
         return false

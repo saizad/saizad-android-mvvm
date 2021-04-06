@@ -42,7 +42,7 @@ abstract class CurrentUserType<U> protected constructor(
 
     }
 
-    fun login(newUser: U) {
+    open fun login(newUser: U) {
         refresh(newUser)
     }
 
@@ -84,6 +84,5 @@ abstract class CurrentUserType<U> protected constructor(
     }
 
     abstract val token: String?
-
 
 }

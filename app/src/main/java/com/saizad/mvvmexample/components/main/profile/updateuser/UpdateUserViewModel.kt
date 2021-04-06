@@ -14,9 +14,8 @@ import javax.inject.Named
 
 @HiltViewModel
 class UpdateUserViewModel @Inject constructor(
-    mainEnvironment: MainEnvironment,
-    savedStateHandle: SavedStateHandle
-) : MainViewModel(mainEnvironment, savedStateHandle){
+    mainEnvironment: MainEnvironment
+) : MainViewModel(mainEnvironment){
 
     val form by lazy {
         ReqResUser.Form(savedStateHandle.get<ReqResUser>("user")!!)

@@ -7,6 +7,7 @@ import android.view.*
 import androidx.annotation.CallSuper
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
@@ -36,6 +37,9 @@ abstract class SaizadBaseBottomSheetDialogFragment<V : SaizadBaseViewModel> :
     override fun viewModelStoreOwner(): ViewModelStoreOwner {
         return this
     }
+
+    override val lifecycleOwner: LifecycleOwner
+        get() = viewLifecycleOwner
 
     abstract override val viewModelClassType: Class<V>
 
@@ -243,6 +247,10 @@ abstract class SaizadBaseBottomSheetDialogFragment<V : SaizadBaseViewModel> :
 
     override fun menRes(): Int {
         return 0
+    }
+
+    override fun bundle(): Bundle? {
+        return arguments
     }
 
 }

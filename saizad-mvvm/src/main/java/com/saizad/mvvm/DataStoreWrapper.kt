@@ -1,6 +1,7 @@
 package com.saizad.mvvm
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -31,6 +32,24 @@ class DataStoreWrapper @Inject constructor(
             remove(prefKey)
         } else {
             val key = stringPreferencesKey(prefKey)
+            context.dataStore.edit {
+                it[key] = value
+            }
+        }
+    }
+
+    fun getBoolean(prefKey: String): Flow<Boolean?> {
+        val key = booleanPreferencesKey(prefKey)
+        return context.dataStore.data.map { pref ->
+            pref[key]
+        }
+    }
+
+    suspend fun putBoolean(prefKey: String, value: Boolean?) {
+        if (value == null) {
+            remove(prefKey)
+        } else {
+            val key = booleanPreferencesKey(prefKey)
             context.dataStore.edit {
                 it[key] = value
             }

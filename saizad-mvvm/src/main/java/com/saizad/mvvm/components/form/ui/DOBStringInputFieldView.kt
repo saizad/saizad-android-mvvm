@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import com.saizad.mvvm.utils.Utils
 import org.joda.time.DateTime
 
-class DOBStringInputFieldView @JvmOverloads constructor(
+open class DOBStringInputFieldView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

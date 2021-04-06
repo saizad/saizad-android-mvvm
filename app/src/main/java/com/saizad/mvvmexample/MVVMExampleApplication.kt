@@ -21,7 +21,11 @@ class MVVMExampleApplication : SaizadApplication() {
     
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
-    
+
+    companion object {
+        const val LOCATION_UPDATE_TAG = "location_update"
+    }
+
     override fun onCreate() {
         super.onCreate()
         WorkManager.initialize(
@@ -64,9 +68,4 @@ class MVVMExampleApplication : SaizadApplication() {
         WorkManager.getInstance(this).getWorkInfoByIdLiveData(oneTimeWorkRequest.id)
             .observeForever(observer)
     }
-
-    companion object {
-        const val LOCATION_UPDATE_TAG = "location_update"
-    }
-
 }

@@ -21,9 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    environment: MainEnvironment,
-    savedStateHandle: SavedStateHandle
-) : MainViewModel(environment, savedStateHandle) {
+    environment: MainEnvironment
+) : MainViewModel(environment) {
 
     fun delayed(
         delay: Int,

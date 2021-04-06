@@ -8,6 +8,7 @@ import androidx.annotation.CallSuper
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.navigation.NavController
@@ -36,6 +37,9 @@ abstract class SaizadBaseDialogFragment<V : SaizadBaseViewModel> :
     override fun viewModelStoreOwner(): ViewModelStoreOwner {
         return this
     }
+
+    override val lifecycleOwner: LifecycleOwner
+        get() = viewLifecycleOwner
 
     abstract override val viewModelClassType: Class<V>
     override fun navController(): NavController {
@@ -249,5 +253,10 @@ abstract class SaizadBaseDialogFragment<V : SaizadBaseViewModel> :
     override fun menRes(): Int {
         return 0
     }
+
+    override fun bundle(): Bundle? {
+        return arguments
+    }
+
 
 }

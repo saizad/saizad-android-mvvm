@@ -22,7 +22,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModuleKt {
+object AppModule {
 
     private const val MAX_REQUEST = 3
 
@@ -32,24 +32,6 @@ object AppModuleKt {
         application: Application, currentUser: MVVMExampleCurrentUser, gson: Gson
     ): SaizadEasyRetrofit {
         return SaizadEasyRetrofit(application, currentUser, gson, BuildConfig.DOMAIN_URL, BuildConfig.DEBUG)
-    }
-
-    @Singleton
-    @Provides
-    fun providesEnvironment(
-        fcmToken: FCMToken,
-        currentUser: MVVMExampleCurrentUser,
-        navigationFragmentResult: BehaviorSubject<ActivityResult<*>>,
-        @Named("notification") notifyOnceBehaviorSubject: BehaviorSubject<NotifyOnce<*>>,
-        permissionManager: PermissionManager
-    ): Environment {
-        return Environment(
-            fcmToken,
-            navigationFragmentResult,
-            currentUser,
-            notifyOnceBehaviorSubject,
-            permissionManager
-        )
     }
 
     @Singleton

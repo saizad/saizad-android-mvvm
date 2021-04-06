@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import com.sa.easyandroidform.ObjectUtils
 
-class IntegerInputFieldView @JvmOverloads constructor(
+open class IntegerInputFieldView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

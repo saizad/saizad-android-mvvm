@@ -1,6 +1,5 @@
 package com.saizad.mvvmexample.components.main
 
-import androidx.lifecycle.SavedStateHandle
 import com.saizad.mvvmexample.MVVMExampleCurrentUser
 import com.saizad.mvvmexample.RequestCodes
 import com.saizad.mvvmexample.api.MainApi
@@ -10,8 +9,7 @@ import com.saizad.mvvmexample.models.ReqResUser
 
 abstract class MainViewModel constructor(
     environment: MainEnvironment,
-    savedStateHandle: SavedStateHandle
-) : MVVMExampleViewModel(environment, savedStateHandle){
+) : MVVMExampleViewModel(environment){
 
     val api: MainApi = environment.api
     var currentUserType: MVVMExampleCurrentUser = environment.currentUser as MVVMExampleCurrentUser

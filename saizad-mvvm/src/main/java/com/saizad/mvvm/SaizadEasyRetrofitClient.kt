@@ -4,6 +4,7 @@ import android.app.Application
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.itkacher.okhttpprofiler.OkHttpProfilerInterceptor
 import com.sa.easyandroidform.ObjectUtils
+import kotlinx.coroutines.GlobalScope
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -11,10 +12,10 @@ import sa.zad.easyretrofit.CachePolicy
 import sa.zad.easyretrofit.EasyRetrofitClient
 import java.net.URLDecoder
 
-class SaizadEasyRetrofitClient(
-    application: Application,
-    private val currentUser: CurrentUserType<*>,
-    private val isDebugMode: Boolean = false
+open class SaizadEasyRetrofitClient(
+    val application: Application,
+    val currentUser: CurrentUserType<*>,
+    val isDebugMode: Boolean = false
 ) : EasyRetrofitClient(application) {
 
     override fun builderReady(builder: OkHttpClient.Builder): OkHttpClient.Builder {

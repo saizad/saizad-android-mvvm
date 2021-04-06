@@ -3,7 +3,7 @@ package com.saizad.mvvm.model
 import android.os.Parcel
 import android.os.Parcelable
 
-open class IdModel(val id: Int) : Parcelable {
+open class IdModel(val id: Int = 0) : Parcelable {
 
     constructor(parcel: Parcel) : this(parcel.readInt())
 

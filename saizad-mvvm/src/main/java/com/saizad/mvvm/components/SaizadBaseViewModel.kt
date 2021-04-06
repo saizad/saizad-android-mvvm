@@ -1,10 +1,7 @@
 package com.saizad.mvvm.components
 
 import androidx.annotation.CallSuper
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.sa.easyandroidform.ObjectUtils
 import com.saizad.mvvm.ActivityResult
 import com.saizad.mvvm.BaseNotificationModel
@@ -12,7 +9,9 @@ import com.saizad.mvvm.Environment
 import com.saizad.mvvm.NotifyOnce
 import com.saizad.mvvm.enums.DataState
 import com.saizad.mvvm.model.BaseApiError
+import com.saizad.mvvm.model.DataModel
 import com.saizad.mvvm.model.ErrorModel
+import com.saizad.mvvm.utils.stateToData
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -22,13 +21,13 @@ import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.map
 import sa.zad.easyretrofit.observables.NeverErrorObservable
 import javax.inject.Inject
 import javax.inject.Named
 
 abstract class SaizadBaseViewModel(
     val environment: Environment,
-    val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val activityResult: BehaviorSubject<ActivityResult<*>> =
@@ -68,13 +67,6 @@ abstract class SaizadBaseViewModel(
     fun <T : BaseNotificationModel> notificationListener(notificationType: String): LiveData<T> {
         val types = arrayOf(notificationType)
         return notificationListener(types)
-    }
-
-    fun <M> liveData(
-        observable: NeverErrorObservable<M>,
-        requestId: Int
-    ): Flow<DataState<M>> {
-        return flowData(observable, requestId, ErrorModel::class.java)
     }
 
     open fun <M, E: BaseApiError> flowData(
@@ -168,7 +160,7 @@ abstract class SaizadBaseViewModel(
         throwable: Throwable, id: Int
     ) {
         val errorData = ErrorData(throwable, id)
-        errorSubject.onNext(errorData)
+        showError(errorData)
         publishSubject.onNext(DataState.Error(throwable))
     }
 

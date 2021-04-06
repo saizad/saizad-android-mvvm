@@ -8,9 +8,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import sa.zad.easyretrofit.EasyRetrofit
 import sa.zad.easyretrofit.EasyRetrofitClient
 
-class SaizadEasyRetrofit(
-    application: Application,
-    private val currentUser: CurrentUserType<*>,
+open class SaizadEasyRetrofit(
+    val application: Application,
+    val currentUser: CurrentUserType<*>,
     private val gson: Gson,
     private val domainUrl: String,
     private val isDebugMode: Boolean = false

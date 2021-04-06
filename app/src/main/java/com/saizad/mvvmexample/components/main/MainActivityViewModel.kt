@@ -8,6 +8,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainActivityViewModel @Inject constructor(
-    environment: MainEnvironment,
-    savedStateHandle: SavedStateHandle
-) : MainViewModel(environment, savedStateHandle)
+    environment: MainEnvironment
+) : MainViewModel(environment)

@@ -8,6 +8,5 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserPageHostViewModel @Inject constructor(
-    mainEnvironment: MainEnvironment,
-    savedStateHandle: SavedStateHandle
-) : MainViewModel(mainEnvironment, savedStateHandle)
+    mainEnvironment: MainEnvironment
+) : MainViewModel(mainEnvironment)

@@ -3,7 +3,7 @@ package com.saizad.mvvm.components.form.ui
 import android.content.Context
 import android.util.AttributeSet
 
-class StringInputFieldView @JvmOverloads constructor(
+open class StringInputFieldView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0

@@ -13,9 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UsersViewModel @Inject constructor(
-    mainEnvironment: MainEnvironment,
-    savedStateHandle: SavedStateHandle
-) : MainViewModel(mainEnvironment, savedStateHandle){
+    mainEnvironment: MainEnvironment
+) : MainViewModel(mainEnvironment){
 
     fun users(
         page: Int?,

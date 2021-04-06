@@ -1,5 +1,6 @@
 package com.saizad.mvvmexample.components.auth.login
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.saizad.mvvm.enums.DataState
@@ -17,9 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    environment: AuthEnvironment,
-    savedStateHandle: SavedStateHandle
-) : AuthViewModel(environment, savedStateHandle) {
+    environment: AuthEnvironment
+) : AuthViewModel(environment) {
 
     private val form by lazy {
         LoginBody.EmailLoginForm("eve.holt@reqres.in")
@@ -38,6 +38,6 @@ class LoginViewModel @Inject constructor(
     }
 
     fun user(user: Int, requestId: Int = ApiRequestCodes.USER): Flow<DataState<DataModel<ReqResUser>>> {
-        return liveData(api.user(user), requestId)
+        return flowData(api.user(user), requestId)
     }
 }
