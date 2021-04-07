@@ -46,9 +46,11 @@ abstract class CurrentUserType<U> protected constructor(
         refresh(newUser)
     }
 
-    suspend fun logout() {
-        dataStoreWrapper.removeAll()
-        currentUserLiveData.postValue(null)
+    open suspend fun logout(listener: () -> Unit) {
+        dataStoreWrapper.removeAll {
+            currentUserLiveData.postValue(null)
+            listener.invoke()
+        }
     }
 
     fun refresh(freshUser: U) {

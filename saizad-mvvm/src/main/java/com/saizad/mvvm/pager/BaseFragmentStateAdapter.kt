@@ -1,8 +1,6 @@
 package com.saizad.mvvm.pager
 
-import android.util.SparseArray
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -10,20 +8,19 @@ import com.saizad.mvvm.utils.Utils
 import io.reactivex.android.schedulers.AndroidSchedulers
 
 open class BaseFragmentStateAdapter<F : BasePage<*>>(
-    fm: FragmentActivity,
+    private val hostFragment: Fragment,
     private val items: List<Class<out F>>,
     viewPager: ViewPager2
-) : FragmentStateAdapter(fm) {
+) : FragmentStateAdapter(hostFragment) {
 
     private var pageListener: PageListener<F>? = null
-    private val fragments = SparseArray<F>()
     var currentPage: F? = null
     private var selected = -1
 
     init {
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
-                selected = if (cb(position)) {
+                selected = if (makeCall(position)) {
                     -1
                 } else {
                     position
@@ -32,23 +29,24 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
         })
     }
 
-    private fun cb(position: Int): Boolean {
-        fragments.get(position)?.let {
-            it.onPageSelected()
-            if (currentPage != it) {
-                currentPage?.onPageUnSelected()
-                if (it.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
-                    pageListener?.onPageReady(it)
-                } else {
-                    return false
+    private fun makeCall(position: Int): Boolean {
+        val fragments = hostFragment.childFragmentManager.fragments
+        fragments.forEach {
+            if (it is BasePage<*>) {
+                if (it.pageIndex == position && currentPage != it) {
+                    currentPage?.onPageUnSelected()
+                    if (it.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                        pageListener?.onPageReady(it as F)
+                    } else {
+                        return false
+                    }
+                    currentPage = it as F
+                    return true
                 }
             }
-            currentPage = it
-            return true
         }
         return false
     }
-
 
     open fun setPageListener(pageListener: PageListener<F>) {
         this.pageListener = pageListener
@@ -57,7 +55,6 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
     override fun createFragment(position: Int): Fragment {
         val createInstance = Utils.createInstance(items[position])!!
         createInstance.pageIndex = position
-        fragments.put(position, createInstance)
         createInstance.pageLoaded()
             .doOnNext {
                 pageListener?.onPageLoaded(createInstance, position)
@@ -65,7 +62,7 @@ open class BaseFragmentStateAdapter<F : BasePage<*>>(
             .filter { selected == position }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                cb(position)
+                makeCall(position)
             }
         return createInstance
     }

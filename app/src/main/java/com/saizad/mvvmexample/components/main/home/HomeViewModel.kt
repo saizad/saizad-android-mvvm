@@ -31,10 +31,12 @@ class HomeViewModel @Inject constructor(
         return flowData(api.delayedResponse(delay), requestId)
     }
 
-    fun logout(): LiveData<Void> {
-        val mutableLiveData = MutableLiveData<Void>()
+    fun logout(): LiveData<Void?> {
+        val mutableLiveData = MutableLiveData<Void?>()
         viewModelScope.launch {
-            currentUserType.logout()
+            currentUserType.logout {
+                mutableLiveData.postValue(null)
+            }
         }
         return mutableLiveData
     }

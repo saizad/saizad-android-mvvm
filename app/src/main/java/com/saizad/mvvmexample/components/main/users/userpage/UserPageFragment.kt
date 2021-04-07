@@ -9,6 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.saizad.mvvm.utils.isFirstPage
 import com.saizad.mvvm.utils.lifecycleScopeOnMainWithDelay
 import com.saizad.mvvm.utils.prev
+import com.saizad.mvvm.utils.throttleClick
 import com.saizad.mvvmexample.R
 import com.saizad.mvvmexample.components.main.MainPageFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,6 +36,12 @@ class UserPageFragment : MainPageFragment<UserPageViewModel>() {
                 .load(it.avatar)
                 .transform(CenterCrop())
                 .into(bigAvatar)
+
+            bigAvatar.throttleClick {
+                openFragment(R.id.updateUserFragment, {
+                  putParcelable("user", it)
+                })
+            }
         })
     }
 

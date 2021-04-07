@@ -10,6 +10,7 @@ import com.saizad.mvvm.utils.lifecycleScopeOnMain
 import com.saizad.mvvm.utils.throttleClick
 import com.saizad.mvvmexample.MVVMExampleCurrentUser
 import com.saizad.mvvmexample.R
+import com.saizad.mvvmexample.RequestCodes
 import com.saizad.mvvmexample.components.main.MainFragment
 import dagger.hilt.android.AndroidEntryPoint
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -35,7 +36,7 @@ class UpdateUserFragment : MainFragment<UpdateUserViewModel>() {
 
         save.throttleClick {
             viewModel().save().observe(viewLifecycleOwner, Observer {
-                finish()
+                finishWithResult(ActivityResult(RequestCodes.USER, it))
             })
         }
 

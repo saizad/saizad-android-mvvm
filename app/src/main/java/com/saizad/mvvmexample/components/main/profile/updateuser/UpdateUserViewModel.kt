@@ -14,7 +14,8 @@ import javax.inject.Named
 
 @HiltViewModel
 class UpdateUserViewModel @Inject constructor(
-    mainEnvironment: MainEnvironment
+    mainEnvironment: MainEnvironment,
+    savedStateHandle: SavedStateHandle
 ) : MainViewModel(mainEnvironment){
 
     val form by lazy {
@@ -24,7 +25,6 @@ class UpdateUserViewModel @Inject constructor(
     fun save(): LiveData<ReqResUser>{
         val mutableLiveData = MutableLiveData<ReqResUser>()
         val freshUser = form.requiredBuild()
-        currentUserType.refresh(freshUser)
         mutableLiveData.value = freshUser
         return mutableLiveData
     }

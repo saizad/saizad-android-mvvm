@@ -71,16 +71,18 @@ class DataStoreWrapper @Inject constructor(
         }
     }
 
-    suspend fun remove(prefKey: String) {
+    suspend fun remove(prefKey: String, listener: () -> Unit = {}) {
         val key = stringPreferencesKey(prefKey)
         context.dataStore.edit {
             it.remove(key)
+            listener.invoke()
         }
     }
 
-    suspend fun removeAll() {
+    suspend fun removeAll(listener: () -> Unit) {
         context.dataStore.edit {
             it.clear()
+            listener.invoke()
         }
     }
 }
